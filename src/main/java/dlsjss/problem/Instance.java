@@ -1,6 +1,8 @@
 package dlsjss.problem;
 
 import dlsjss.util.ExcelReader;
+import ec.EvolutionState;
+import ec.util.Parameter;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 
 import java.io.IOException;
@@ -30,15 +32,16 @@ public class Instance {
         { throw new InternalError(); } // never happens
     }
 
-    public void setup(int nProducts, int nMachines, int nPeriods, int RandomSeed) throws IOException, InvalidFormatException {
+    public void setup(EvolutionState state, int nProducts, int nMachines, int nPeriods, int RandomSeed) throws IOException, InvalidFormatException {
         NPRODUCTS = nProducts;
         NMACHINES = nMachines;
         NPERIODS = nPeriods;
         RANDOMSEED = RandomSeed;
         //this.capacityTightness = CapacityTightness;
-
+        Parameter p = new Parameter("path-instances");
+        String pathInstances = state.parameters.getString(p, (Parameter) null);
         // load input data from excel
-        String FILE_PATH = "C:/Users/José Rui Figueira/IntelliJProjects/LSJSS_GPHH/Experiment1/rs"+RandomSeed+"/"+nProducts+"x"+nMachines+"x"+nPeriods+"/results.xlsx";
+        String FILE_PATH = pathInstances + "rs" + RandomSeed +"/"+nProducts+"x"+nMachines+"x"+nPeriods+"/results.xlsx";
 
         demands = ExcelReader.readInputDataArrayInt(FILE_PATH, "demands");
         routings = ExcelReader.readInputDataArrayInt(FILE_PATH, "routings");

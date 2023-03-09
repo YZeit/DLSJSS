@@ -93,7 +93,7 @@ public class InstanceSetFull {
                         p = base.push(P_RANDOMSEED).push("" + x);
                         randomSeeds[x] = state.parameters.getInt(p, null, 0);
                         CCstate.trainingSet.instances[x+(size*y)] = new Instance();
-                        CCstate.trainingSet.instances[x+(size*y)].setup(nProducts[y], nMachines[y], nPeriods[y], randomSeeds[x]);
+                        CCstate.trainingSet.instances[x+(size*y)].setup(state, nProducts[y], nMachines[y], nPeriods[y], randomSeeds[x]);
                     }
                 }
             }
@@ -110,7 +110,7 @@ public class InstanceSetFull {
                         p = base.push(P_RANDOMSEED).push("" + x);
                         randomSeeds[x] = state.parameters.getInt(p, null, 0);
                         CCstate.validationSet.instances[x+(size*y)] = new Instance();
-                        CCstate.validationSet.instances[x+(size*y)].setup(nProducts[y], nMachines[y], nPeriods[y], randomSeeds[x]);
+                        CCstate.validationSet.instances[x+(size*y)].setup(state, nProducts[y], nMachines[y], nPeriods[y], randomSeeds[x]);
                     }
                 }
             }

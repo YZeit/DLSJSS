@@ -74,7 +74,7 @@ public class InstanceSetSimple {
                 p = base.push(P_RANDOMSEED).push("" + x);
                 randomSeeds[x] = state.parameters.getInt(p, null, 0);
                 CCstate.trainingSet.instances[x] = new Instance();
-                CCstate.trainingSet.instances[x].setup(nProducts, nMachines, nPeriods, randomSeeds[x]);
+                CCstate.trainingSet.instances[x].setup(state, nProducts, nMachines, nPeriods, randomSeeds[x]);
             }
         }
         if (set == "validation") {
@@ -83,7 +83,7 @@ public class InstanceSetSimple {
                 p = base.push(P_RANDOMSEED).push("" + x);
                 randomSeeds[x] = state.parameters.getInt(p, null, 0);
                 CCstate.validationSet.instances[x] = new Instance();
-                CCstate.validationSet.instances[x].setup(nProducts, nMachines, nPeriods, randomSeeds[x]);
+                CCstate.validationSet.instances[x].setup(state, nProducts, nMachines, nPeriods, randomSeeds[x]);
             }
         }
         if (set != "training" && set != "validation"){
