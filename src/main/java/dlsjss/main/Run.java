@@ -18,7 +18,7 @@ public class Run {
                 "-p", ("path-instances-validation="+pathToInstancesValidation),
         };
         Evolve.main(runConfig);
-
+        System.out.println("hallo");
 
     }
 }
