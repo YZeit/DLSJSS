@@ -291,7 +291,7 @@ public class LotSizingFunctionsFinal {
     public static int[][] increaseLotsize(int numberMachines, int numberProducts, int[][] productionQuantities,
                                           double[][] processingTime, int[][]routings, double[] capacity, double[] residualCapacity,
                                           int currentPeriod, int numberPeriods, int[][] demands, int[] setupCosts,
-                                          int[] holdingCosts, int[][] inventory, int[] setupTimes,
+                                          int[] holdingCosts, int[][] inventory, int[] setupTimes, int[] backlogCosts,
                                           GPIndividual JSSRule, GPIndividual LSSRule, DoubleData input, EvolutionState state,
                                           int threadnum, ADFStack stack, ec.Problem problem){
         double[][] CSI = new double[numberProducts][numberPeriods];
@@ -304,11 +304,17 @@ public class LotSizingFunctionsFinal {
                     int coveragePeriod = 0;
                     int y = currentPeriod;
                     while (x > 0){
-                        x = x-demands[i][y];
-                        if (y > currentPeriod){
-                            coveragePeriod+=1;
+                        if (y<numberPeriods){
+                            x = x-demands[i][y];
+                            if (y > currentPeriod){
+                                coveragePeriod+=1;
+                            }
+                            y += 1;
                         }
-                        y += 1;
+                        else{
+                            coveragePeriod+=1;
+                            x=0;
+                        }
                     }
                     // calculate CSI
                     // Example: Dixon-Silver
@@ -358,7 +364,7 @@ public class LotSizingFunctionsFinal {
                             PDAI += demands[n][m];}
                     }
                     double APDAI = PDAI/((numberPeriods-currentPeriod)*numberProducts);
-                    ((LSJSS_GPHH)problem).currentAPDAI = APDAI;
+                    //((LSJSS_GPHH)problem).currentAPDAI = APDAI;
                     double RCC = 0;
                     for(int m=currentPeriod+1; m<numberPeriods; m++){
                         RCC += residualCapacity[m];}
@@ -366,6 +372,7 @@ public class LotSizingFunctionsFinal {
                     ((LSJSS_GPHH)problem).currentCLS = productionQuantities[i][currentPeriod];
                     ((LSJSS_GPHH)problem).currentTBO = Math.sqrt((2*((LSJSS_GPHH)problem).currentSC)/(((LSJSS_GPHH)problem).currentHC*
                             ((LSJSS_GPHH)problem).currentAPD));
+                    ((LSJSS_GPHH)problem).currentBC = backlogCosts[i];
 
                     LSSRule.trees[0].child.eval(state,threadnum,input,stack,LSSRule,problem);  // calculate priority; here is where the GP must evolve new scheduling rules
                     double priority = input.x;
@@ -421,8 +428,8 @@ public class LotSizingFunctionsFinal {
                                              int[] holdingCosts, int[][] inventory, int[] setupTimes,
                                              GPIndividual IndividualToEvaluate, DoubleData input, EvolutionState state,
                                              int threadnum, ADFStack stack, ec.Problem problem, Instance currentInstance){
-        System.out.println("Backtrack mechanism activated");
-        currentInstance.print();
+        //System.out.println("Backtrack mechanism activated");
+        //currentInstance.print();
 
         // set production quantities of current period to zero
         for (int i=0; i<numberProducts; i++){
@@ -565,13 +572,6 @@ public class LotSizingFunctionsFinal {
                             } //System.out.println("Assignment of product " + productToAssign + " feasible");
                             //System.out.println("production quantities: " + Arrays.deepToString(productionQuantities));}
                         }
-                    }
-                    if (l == 0) {
-                        //System.out.println("product " + productToAssign + " cannot be assigned to an existing lot without exceeding the capacity restrictions");
-                        // here I have to stop the procedure and return fitness of 10000 (large number, poor number) to identify the heuristic as not able find a feasible solution
-                        // another option would be to implement a forward procedure (keep in mind and eventually implement)
-                        // set the production quantity for the first product first period to 9999 to indicate infeasibility
-                        productionQuantities[0][0] = 9999;
                     }
                 }
             }

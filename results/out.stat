@@ -1,0 +1,381 @@
+
+Generation: 0
+Best Individual:
+Subpopulation 0:
+Evaluated: true
+Fitness: -814.18
+Tree 0:
+ (+ RTO RPT)
+Subpopulation 1:
+Evaluated: true
+Fitness: -814.18
+Tree 0:
+ (ifte (max (min NI ADSHCE) (- CP APDR)) (min
+     (max HCC BSV) (ifte CU SC APDR)) (min (*
+     LPH HCC) (/ AHC LPH)))
+
+Generation: 1
+Best Individual:
+Subpopulation 0:
+Evaluated: true
+Fitness: -811.67
+Tree 0:
+ (min (min (/ (max PTN SL) (/ RNO SL)) (/
+     (/ RT RPT) (* RNO CT))) (/ (/ (max SL RT)
+     (max DD WT)) (min (* CT RTO) (- APTQ DD))))
+Subpopulation 1:
+Evaluated: true
+Fitness: -811.67
+Tree 0:
+ (min (max LPH ADSHCE) (* (+ ADSHCE APDR)
+     (* PLE CLS)))
+
+Generation: 2
+Best Individual:
+Subpopulation 0:
+Evaluated: true
+Fitness: -811.07
+Tree 0:
+ (+ (+ (- (max (min NJQ SL) (* RPT PTN)) (ifte
+     (* PT RT) (ifte WT DD APTQ) (* RTO NJQ)))
+     (ifte (- RNO CT) (max (* NJQ APTQ) (+ NJQ
+         APTQ)) (/ (max APTQ CT) (* RT RPT)))) (-
+     (+ (* (+ WT PTN) (min RPT RNO)) (* (/ PT
+         RPT) (+ APTQ APTQ))) (+ (* (- RT RNO) (min
+     RT WT)) (/ (min APTQ DD) (* RTO RNO)))))
+Subpopulation 1:
+Evaluated: true
+Fitness: -811.07
+Tree 0:
+ (ifte AHC CLS HC)
+
+Generation: 3
+Best Individual:
+Subpopulation 0:
+Evaluated: true
+Fitness: -805.94
+Tree 0:
+ (ifte (- APTQ PT) APTQ (max (+ (ifte RPT
+     PT WT) (ifte WINQ RT RPT)) (* (min (/ APTQ
+     WINQ) (- CT RNO)) (+ DD WT))))
+Subpopulation 1:
+Evaluated: true
+Fitness: -805.94
+Tree 0:
+ (* BSV CF)
+
+Generation: 4
+Best Individual:
+Subpopulation 0:
+Evaluated: true
+Fitness: -805.9
+Tree 0:
+ (- (/ SL SL) (/ (max RTO WT) (/ PT RTO)))
+Subpopulation 1:
+Evaluated: true
+Fitness: -805.9
+Tree 0:
+ (min (+ (+ (+ (* C TBO) (max HCC BSV)) (ifte
+     (* PLE NI) (min CF TBO) (- SHCN TBO))) (min
+     (ifte (ifte AHC RCC CLS) (* AHC ADSHCE) (ifte
+         CU SC HC)) (max (/ NI PLE) (+ (* (max NPRC
+     BSV) (- CLS APD)) (* (- LPH NPRE) (max APD
+     APD)))))) (* (ifte (max (/ HC HCC) BSV) (max
+     (+ ADSHC NI) (/ RCC NPRC)) (+ (max HC NI)
+     (max NPRE TBO))) (min (min (/ ADSHC ADSHC)
+     (min CLS PLE)) (max (+ PLE CF) (min C ADSHCE)))))
+
+Generation: 5
+Best Individual:
+Subpopulation 0:
+Evaluated: true
+Fitness: -805.94
+Tree 0:
+ (ifte (- APTQ PT) APTQ (max (+ APTQ (ifte
+     WINQ RT RPT)) (* (min (/ APTQ WINQ) (- CT
+     RNO)) (+ DD WT))))
+Subpopulation 1:
+Evaluated: true
+Fitness: -805.94
+Tree 0:
+ (ifte (min AHC C) (- (ifte SC (max NPRC BSV)
+     (- LPH C)) (min (* APDR NPRC) (max HCC BSV)))
+     (min (* LPH HCC) (min CLS PLE)))
+
+Generation: 6
+Best Individual:
+Subpopulation 0:
+Evaluated: true
+Fitness: -805.83
+Tree 0:
+ (+ (ifte RPT PT WT) (- (ifte (+ APTQ (- SL
+     WT)) WT APTQ) (* PT RNO)))
+Subpopulation 1:
+Evaluated: true
+Fitness: -805.83
+Tree 0:
+ (ifte (- CLS NPRC) (min (ifte (/ NI CU) (*
+     APDR ADSHC) (/ (min CU (min CP NPRC)) (/
+     ADSHC ADSHC))) (ifte (ifte (- CLS NPRC) (min
+     (max HCC BSV) (ifte (min AHC C) SC APDR))
+     (* BSV CF)) SC APDR)) (* BSV CF))
+
+Generation: 7
+Best Individual:
+Subpopulation 0:
+Evaluated: true
+Fitness: -805.83
+Tree 0:
+ (+ (ifte RPT PT WT) (- (ifte (+ APTQ (max
+     (* (ifte RNO SL WINQ) (- PTN RNO)) (max (-
+     CT CT) (- NJQ PT)))) WT APTQ) (* PT RNO)))
+Subpopulation 1:
+Evaluated: true
+Fitness: -805.83
+Tree 0:
+ (ifte (max (max BSV NPRC) (- CP APDR)) (min
+     (max HCC BSV) (max (* (ifte (* (min AHC LPH)
+     (ifte SC TBO ADSHCE)) (min (* ADSHCE CLS)
+     (ifte CF CU NPRC)) (ifte (/ APDK PLE) (max
+     SHC C) (* SHCN CF))) (ifte (ifte (max SHC
+     ADSHCE) (ifte NPRC TBO SC) (/ CP C)) (* (/
+     RCC SHC) (* CF HC)) (min (ifte PLE (max HCC
+     BSV) C) (/ HC C)))) (- (min (+ (max HCC BSV)
+     (* CF AHC)) (ifte CLS (ifte NPRE SHCN AHC)
+     (- SC PLE))) (/ (* (max ADSHCE NPRE) SC)
+     (* (+ HC SHCN) (ifte CLS C HC)))))) (min
+     (* LPH HCC) (/ AHC LPH)))
+
+Generation: 8
+Best Individual:
+Subpopulation 0:
+Evaluated: true
+Fitness: -805.67
+Tree 0:
+ (/ (/ RPT (max (min (ifte APTQ SL DD) (+
+     RPT APTQ)) (max RT WT))) (min (+ (+ RNO RTO)
+     WINQ) PT))
+Subpopulation 1:
+Evaluated: true
+Fitness: -805.67
+Tree 0:
+ (min (+ (+ (+ (* C TBO) (max HCC BSV)) (ifte
+     (* PLE NI) (min CF TBO) (- SHCN TBO))) (min
+     (min (max HCC BSV) (/ NI PLE)) (max (/ NI
+     PLE) (max (+ ADSHCE NI) (min (/ NI CU) APDR)))))
+     (* (ifte (max (/ HC HCC) (max CLS (max BSV
+         NPRC))) (max (* BSV CF) (/ RCC NPRC)) (+
+         (max HC NI) (max NPRE TBO))) (min (min (/
+         ADSHC ADSHC) (min CLS PLE)) (max (+ PLE CF)
+         (max (+ PLE CF) (min C ADSHCE))))))
+
+Generation: 9
+Best Individual:
+Subpopulation 0:
+Evaluated: true
+Fitness: -805.5
+Tree 0:
+ (/ (/ RPT (max (min (ifte APTQ SL DD) (+
+     RPT APTQ)) (max RT WT))) (min (+ (ifte APTQ
+     SL DD) WINQ) PT))
+Subpopulation 1:
+Evaluated: true
+Fitness: -805.5
+Tree 0:
+ (min C (* (ifte (ifte CU SC APDR) (max (ifte
+     (- (min BSV (/ SHCN NPRE)) (max SHC CU))
+     (+ (+ PLE CF) (* BSV NPRE)) (* (min CLS BSV)
+     (* ADSHC ADSHCE))) (ifte (- (/ HCC (- AHC
+     NPRE)) (max HCC BSV)) BSV (* (min CLS BSV)
+     (* ADSHC ADSHCE)))) (+ (max HC NI) (max NPRE
+     TBO))) (min (min (/ ADSHC ADSHC) (min CLS
+     PLE)) (max (+ PLE CF) (min C ADSHCE)))))
+
+Generation: 10
+Best Individual:
+Subpopulation 0:
+Evaluated: true
+Fitness: -805.36
+Tree 0:
+ (ifte (* (ifte (min (min RNO CT) WT) (+ PTN
+     RPT) (- RT DD)) (- (max SL CT) (+ WT PT)))
+     (- (- (ifte (/ PTN DD) (min RTO DD) CT) (-
+         PT PTN)) (* (max NJQ RTO) (+ RTO DD))) (*
+     (/ (- RTO PTN) (* PT RNO)) (+ (min RTO PT)
+     (- PTN PT))))
+Subpopulation 1:
+Evaluated: true
+Fitness: -805.36
+Tree 0:
+ (min (+ (min BSV AHC) (* CF HC)) (* (ifte
+     (max (/ HC HCC) (max CLS HCC)) (max (+ ADSHC
+     NI) (/ RCC NPRC)) (+ (max HC NI) (max HC
+     TBO))) (min (min (/ ADSHC ADSHC) (min CLS
+     PLE)) (max (+ PLE CF) (min C ADSHCE)))))
+
+Generation: 11
+Best Individual:
+Subpopulation 0:
+Evaluated: true
+Fitness: -805.31
+Tree 0:
+ (ifte (* (ifte (min (min RNO CT) WT) (+ PTN
+     RPT) (- RT DD)) (- (max SL CT) (+ WT PT)))
+     (- (- (ifte (/ PTN (+ NJQ RT)) (min (/ CT
+         APTQ) DD) CT) (- PT PTN)) (* APTQ (+ RTO
+         DD))) (* (/ (- RTO PTN) (* PT RNO)) (max
+     DD (* CT RTO))))
+Subpopulation 1:
+Evaluated: true
+Fitness: -805.31
+Tree 0:
+ (ifte (- (/ HCC (- AHC NPRE)) (max HCC BSV))
+     BSV (* (ifte (+ SC CU) (min (max BSV NPRC)
+     BSV) (min (* LPH HCC) (- LPH C))) (* ADSHC
+     (min (max HCC BSV) (* BSV CF)))))
+
+Generation: 12
+Best Individual:
+Subpopulation 0:
+Evaluated: true
+Fitness: -805.36
+Tree 0:
+ (ifte (* (* (/ (- RTO PTN) (* PT RNO)) (max
+     (min SL RPT) (/ PTN NJQ))) (min PTN PTN))
+     (- (ifte (min RTO (ifte RTO APTQ PTN)) (max
+         DD (- (/ (ifte PT RPT APTQ) (+ (max (/ RPT
+         PTN) (* WT PTN)) DD)) (min (ifte SL APTQ
+         (- PTN PT)) (ifte RNO RPT RNO)))) (max CT
+         SL)) (+ (min SL RNO) (/ SL CT))) (* (/ (-
+     RTO PTN) (* PT RNO)) (max (/ (+ (/ RNO PT)
+     (min APTQ DD)) RPT) (/ PTN NJQ))))
+Subpopulation 1:
+Evaluated: true
+Fitness: -805.36
+Tree 0:
+ (ifte (- (/ HCC (- AHC NPRE)) (max HCC BSV))
+     BSV (* (ifte (min (min (/ ADSHC ADSHC) (min
+     CLS PLE)) (min (/ ADSHC ADSHC) (min CLS PLE)))
+     (min (max BSV NPRC) BSV) (min (* LPH HCC)
+     (- LPH C))) (* ADSHC (min (max HCC BSV) (*
+     BSV CF)))))
+
+Generation: 13
+Best Individual:
+Subpopulation 0:
+Evaluated: true
+Fitness: -805.36
+Tree 0:
+ (ifte (* (ifte (- PTN RNO) (+ PTN RPT) (-
+     RT DD)) (min PTN PTN)) (- (ifte (- RTO WT)
+     PTN (max CT SL)) (+ (min SL RNO) (ifte (min
+     RTO RPT) (max DD (* CT RTO)) (max CT SL))))
+     (* (/ (- RTO PTN) (* PT RNO)) (max (/ (+
+         (/ RNO PT) (min APTQ DD)) RPT) (/ PTN NJQ))))
+Subpopulation 1:
+Evaluated: true
+Fitness: -805.36
+Tree 0:
+ (ifte (max (ifte (/ (min (min NI CP) (* BSV
+     TBO)) (- BSV ADSHC)) RCC CLS) (- (* LPH HCC)
+     APDR)) (min (max HCC BSV) HC) (min (* LPH
+     HCC) (max NPRE TBO)))
+
+Generation: 14
+Best Individual:
+Subpopulation 0:
+Evaluated: true
+Fitness: -804.35
+Tree 0:
+ (min (- (- (min (* CT RTO) (- APTQ DD)) (+
+     APTQ (* WINQ RPT))) (+ (ifte RTO PTN PTN)
+     RTO)) (ifte (- (ifte (min RTO RPT) (+ (min
+     RTO PT) (- PTN PT)) (max CT SL)) (- RTO (max
+     (* (* NJQ PT) (- PTN RNO)) (max (- CT CT)
+     (- NJQ PT))))) (min (+ (min RTO PT) (- PTN
+     PT)) (- (min SL RPT) (- RTO WT))) (ifte (/
+     (- RTO PTN) (* PT RNO)) (min (ifte APTQ (min
+     APTQ DD) DD) (min PTN NJQ)) (* RT (ifte RTO
+     APTQ PTN)))))
+Subpopulation 1:
+Evaluated: true
+Fitness: -804.35
+Tree 0:
+ (ifte (ifte (* (+ (max HC NI) (max NPRE TBO))
+     (min (max HCC BSV) NPRE)) (max (ifte (- (/
+     BSV C) (max SHC CU)) (+ (max CP BSV) (max
+     NPRC BSV)) (* (min CLS BSV) (* ADSHC ADSHCE)))
+     (min AHC LPH)) (+ (max HC NI) (max NPRE TBO)))
+     (max BSV NPRC) (* PLE NI))
+
+Generation: 15
+Best Individual:
+Subpopulation 0:
+Evaluated: true
+Fitness: -804.35
+Tree 0:
+ (min (- (- (min (* CT RTO) (- APTQ DD)) (+
+     APTQ (* WINQ RPT))) (+ (ifte RTO PTN PTN)
+     RTO)) (ifte (- (ifte (min RTO RPT) (+ (min
+     RTO PT) (- PTN PT)) (max CT SL)) (max (-
+     APTQ PTN) SL)) (min (+ (min RTO PT) (- PTN
+     PT)) (- (min SL RPT) (- RTO WT))) (ifte (+
+     (max RNO APTQ) (max RTO WT)) (ifte (min (max
+     (- APTQ PTN) SL) WT) (+ PTN RPT) (- RT DD))
+     (* RT (ifte RTO APTQ PTN)))))
+Subpopulation 1:
+Evaluated: true
+Fitness: -804.35
+Tree 0:
+ (min (+ (min (min (ifte (max HC NPRE) (min
+     (max BSV NPRC) BSV) HCC) (min (max HCC BSV)
+     (ifte CU SC APDR))) (max (max BSV NPRC) (-
+     CP APDR))) (min (ifte (max (/ HC HCC) (max
+     CLS HCC)) (max (ifte (- (min BSV (/ SHCN
+     NPRE)) (max SHC CU)) (* (ifte (max (/ HC
+     HCC) (max CLS HCC)) (max (ifte (- (min BSV
+     (/ SHCN NPRE)) (max SHC CU)) (+ (+ PLE CF)
+     (* SC ADSHCE)) (max (ifte CU SC APDR) (+
+     BSV (max HCC BSV)))) (/ AHC LPH)) (/ BSV
+     C)) (min (min (/ ADSHC ADSHC) (min CLS PLE))
+     (max (+ PLE CF) (min C ADSHCE)))) (* (min
+     CLS BSV) (* ADSHC ADSHCE))) (ifte CU (ifte
+     (+ HCC ADSHC) CLS (- TBO C)) APDR)) (+ (max
+     (max (ifte SC TBO ADSHCE) (- (/ (max (+ HCC
+         ADSHC) (- CP APDR)) (max HCC BSV)) (/ (*
+         (max ADSHCE NPRE) (min APD SHCN)) (* (+ HC
+         SHCN) (ifte CLS C HC))))) NI) (max NPRE TBO)))
+     (max (/ NI PLE) (* C LPH)))) (min ADSHCE
+     BSV))
+
+Generation: 16
+Best Individual:
+Subpopulation 0:
+Evaluated: true
+Fitness: -804.35
+Tree 0:
+ (min (- (- (min (* CT RTO) (- APTQ DD)) (+
+     APTQ (* WINQ RPT))) (+ (ifte RTO PTN PTN)
+     RTO)) (ifte (- (ifte (min RTO RPT) (+ (min
+     RTO PT) (- PTN PT)) (max CT SL)) (- (ifte
+     RTO APTQ PTN) (max (* (* NJQ PT) (- PTN RNO))
+     (max (- CT CT) (- NJQ PT))))) (min (max SL
+     CT) (- (min SL RPT) (- RTO WT))) (ifte (+
+     (max RNO APTQ) (max RTO WT)) (ifte (min (max
+     (- APTQ PTN) SL) WT) (+ PTN RPT) (- RT DD))
+     (* RT (ifte RTO APTQ PTN)))))
+Subpopulation 1:
+Evaluated: true
+Fitness: -804.35
+Tree 0:
+ (min BSV (* (ifte (/ RCC NPRC) (max (+ ADSHC
+     NI) (- (max CLS HCC) (- HC APDK))) (+ (ifte
+     ADSHC BSV (+ (ifte (min (ifte (/ LPH CU)
+     (* APDR ADSHC) (/ (min CU (min CP NPRC))
+     (/ ADSHC ADSHC))) (ifte (ifte (- CLS NPRC)
+     (min (max HCC BSV) (ifte (min AHC C) SC APDR))
+     (* BSV CF)) SC APDR)) BSV (ifte (- BSV (*
+     (min CLS BSV) (* ADSHC ADSHCE))) (min (ifte
+     AHC CLS HC) (ifte CU SC APDR)) (* HC (* ADSHC
+     ADSHCE)))) (max HCC BSV))) CU)) (min (min
+     (- SC APD) NI) (max (+ PLE CF) ADSHCE))))

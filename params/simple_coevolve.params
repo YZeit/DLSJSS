@@ -80,7 +80,7 @@ trainingset.machines-list.0 = 6
 trainingset.periods-list.0 = 5
 
 
-validationset.instance-size = 9
+validationset.instance-size = 1
 validationset.products-list.0 = 6
 validationset.products-list.1 = 6
 validationset.products-list.2 = 6
@@ -113,19 +113,23 @@ validationset.periods-list.8 = 20
 # ==============================
 
 # training set random seeds
-trainingset.size =			5
+trainingset.size =			1
 trainingset.randomseed.0 = 	10
 trainingset.randomseed.1 = 	58
 trainingset.randomseed.2 = 	139
 trainingset.randomseed.3 = 	214
 trainingset.randomseed.4 = 	369
 
+trainingset.scenariosize = 100
+
+
 # validation set
 # ==============================
 
 # training set random seeds
-validationset.size =			10
-validationset.randomseed.0 = 	410
+validationset.size =			1
+validationset.randomseed.0 = 	10
+#validationset.randomseed.0 = 	410
 validationset.randomseed.1 = 	588
 validationset.randomseed.2 = 	619
 validationset.randomseed.3 = 	748
@@ -136,6 +140,7 @@ validationset.randomseed.7 = 	1613
 validationset.randomseed.8 = 	1788
 validationset.randomseed.9 = 	1938
 
+validationset.scenariosize = 100
 
 
 # ec.Initializer
@@ -180,6 +185,8 @@ pop.subpop.1.duplicate-retries =	100
 # path where the statistics should be saved
 path-results =              D:/IntelliJProjects/LSJSS_GPHH/results/
 path-instances =            D:/IntelliJProjects/LSJSS_GPHH/results/
+path-instances-training =            D:/IntelliJProjects/LSJSS_GPHH/results/
+path-instances-validation =            D:/IntelliJProjects/LSJSS_GPHH/results/
 
 # output statistics to the file "out.stat" in the directory
 # the run was started in

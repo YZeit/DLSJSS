@@ -9,12 +9,10 @@ import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import dlsjss.problem.CoevolutionState;
 import dlsjss.problem.CoevolutionStatistics;
 import dlsjss.problem.Instance;
-import dlsjss.problem.InstanceSetSimple;
 import dlsjss.rule.GPProblemCOEV;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 
 public class LSJSS_GPHH extends GPProblemCOEV implements GroupedProblemForm {
@@ -63,7 +61,7 @@ public class LSJSS_GPHH extends GPProblemCOEV implements GroupedProblemForm {
     public double currentPLE; // 26 Potential lot extension of item i (i.e. demand in period τ + T #done
     public double currentRCC; // 30 Remaining cumulated capacity from period τ + 1 to H #done
     public double currentADSHCE; // 32 Absolute deviation between setup and holding costs incurred with the extended lot of item i #done
-
+    public double currentBC; // 33 Backlog costs i #done
 
     public double currentATCC; // 6 Average total costs per period incurred with the current lot #notdone
     public double currentFP; // 31 First period where cumulated demand exceeds cumulated capacity #notdone
@@ -133,9 +131,9 @@ public class LSJSS_GPHH extends GPProblemCOEV implements GroupedProblemForm {
             //System.out.println("instance: " + r);
             //currentInstance.print();
             try {
-                result = MainLotsizingFinal.run((GPIndividual) ind[0], (GPIndividual) ind[1], input, state, threadnum, stack, this,
+                result += MainLotsizingFinal.run((GPIndividual) ind[0], (GPIndividual) ind[1], input, state, threadnum, stack, this,
                         currentInstance);
-                gap += (result/currentInstance.optimum)-1;
+                //gap += (result/currentInstance.optimum_stochastic)-1;
                 //System.out.println("result: "+result);
             } catch (IOException e) {
                 throw new RuntimeException(e);
@@ -144,7 +142,7 @@ public class LSJSS_GPHH extends GPProblemCOEV implements GroupedProblemForm {
             }
         }
         double averageCosts = result/nState.trainingSet.instances.length;
-        double averageGap = gap/nState.trainingSet.instances.length;
+        //double averageGap = gap/nState.trainingSet.instances.length;
         //System.out.println("total costs: " + averageCosts);
 
         //((GPIndividual)ind).trees[0].child.eval(
@@ -160,19 +158,19 @@ public class LSJSS_GPHH extends GPProblemCOEV implements GroupedProblemForm {
         if( updateFitness[0] )
         {
             SimpleFitness fit1 = ((SimpleFitness)(ind[0].fitness));
-            fit1.trials.add(-averageGap);
+            fit1.trials.add(-averageCosts);
             // set the fitness because if we're doing Single Elimination Tournament, the tournament
             // needs to know who won this time around.  Don't bother declaring the ideal here.
-            fit1.setFitness(state, -averageGap, false);
+            fit1.setFitness(state, -averageCosts, false);
         }
 
         if( updateFitness[1] )
         {
             SimpleFitness fit2 = ((SimpleFitness)(ind[1].fitness));
-            fit2.trials.add(-averageGap);
+            fit2.trials.add(-averageCosts);
             // set the fitness because if we're doing Single Elimination Tournament, the tournament
             // needs to know who won this time around.
-            fit2.setFitness(state, -averageGap, false);
+            fit2.setFitness(state, -averageCosts, false);
         }
         //SimpleFitness f = ((SimpleFitness) ind[0].fitness);
         //f.setFitness(state, result, false);
@@ -196,8 +194,9 @@ public class LSJSS_GPHH extends GPProblemCOEV implements GroupedProblemForm {
         //expectedResult = currentX*currentX*currentY + currentX*currentY + currentY;
         CoevolutionState nState = (CoevolutionState)state;
         double result = 0.0;
-        double gap = 0.0;
-        double currentgap= 0.0;
+        double totalResult = 0.0;
+        //double gap = 0.0;
+        //double currentgap= 0.0;
         double[] totalElapsedTime = new double[nState.validationSet.instances.length];
         //System.out.println("validation set size:" + nState.validationSet.instances.length);
         for (int r=0; r<(nState.validationSet.instances.length); r++) {
@@ -208,13 +207,14 @@ public class LSJSS_GPHH extends GPProblemCOEV implements GroupedProblemForm {
                 long startTime = System.nanoTime();
                 result = MainLotsizingFinal.run((GPIndividual) ind[0], (GPIndividual) ind[1], input, state, threadnum, stack, this,
                         currentInstance);
+                totalResult += result;
                 long elapsedTime = System.nanoTime() - startTime;
                 totalElapsedTime[r] = elapsedTime*0.000000001;
-                currentgap = (result/currentInstance.optimum)-1;
-                gap += (result/currentInstance.optimum)-1;
+                //currentgap = (result/currentInstance.optimum_deterministic)-1;
+                //gap += (result/currentInstance.optimum_deterministic)-1;
                 CoevolutionStatistics nStateStatistics = (CoevolutionStatistics) nState.statistics;
                 for (int s=0; s<state.population.subpops.length; s++){
-                    nStateStatistics.fitnessesPerGenerationValidation[nState.generation][s][r] = currentgap;
+                    nStateStatistics.fitnessesPerGenerationValidation[nState.generation][s][r] = result;
                     GPIndividual GPind = (GPIndividual) ind[s];
                     nStateStatistics.individualsPerGenerationValidation[nState.generation][s][r] = GPind.trees[0].child.makeCTree(true,
                             GPind.trees[0].printTerminalsAsVariablesInC, GPind.trees[0].printTwoArgumentNonterminalsAsOperatorsInC);
@@ -226,13 +226,13 @@ public class LSJSS_GPHH extends GPProblemCOEV implements GroupedProblemForm {
                 throw new RuntimeException(e);
             }
         }
-        double averageCosts = result/nState.validationSet.instances.length;
-        double averageGap = gap/nState.validationSet.instances.length;
+        double averageCosts = totalResult/nState.validationSet.instances.length;
+        //double averageGap = gap/nState.validationSet.instances.length;
 
         //System.out.println("total costs validation: " + averageCosts);
         CoevolutionStatistics nStateStatistics = (CoevolutionStatistics) nState.statistics;
         for (int s=0; s<state.population.subpops.length; s++){
-            nStateStatistics.fitnessesPerGenerationValidation[nState.generation][s][nState.validationSet.instances.length] = averageGap;
+            nStateStatistics.fitnessesPerGenerationValidation[nState.generation][s][nState.validationSet.instances.length] = averageCosts;
             GPIndividual GPind = (GPIndividual) ind[s];
             nStateStatistics.individualsPerGenerationValidation[nState.generation][s][nState.validationSet.instances.length] = GPind.trees[0].child.makeCTree(true,
                     GPind.trees[0].printTerminalsAsVariablesInC, GPind.trees[0].printTwoArgumentNonterminalsAsOperatorsInC);

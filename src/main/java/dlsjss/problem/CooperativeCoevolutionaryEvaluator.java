@@ -228,6 +228,8 @@ public class CooperativeCoevolutionaryEvaluator extends Evaluator
         long elapsedTime = System.nanoTime() - startTime;
         state.output.message("Total execution time per Generation in sec: "
                 + elapsedTime*0.000000001);
+        CoevolutionStatistics nStateStatistics = (CoevolutionStatistics) state.statistics;
+        nStateStatistics.executionTimePerGeneration[state.generation] = elapsedTime*0.000000001;
     }
 
     protected void beforeCoevolutionaryEvaluation( final EvolutionState state,
@@ -352,12 +354,9 @@ public class CooperativeCoevolutionaryEvaluator extends Evaluator
                     GPStats.fitnessesPerGeneration[state.generation][0][i] = -JSSInd.fitness.fitness();
                     GPStats.fitnessesPerGeneration[state.generation][1][i] = -LSSInd.fitness.fitness();
                     // here I add the information of the best ind
-                    if (best_inds[0] == null) {
-                        best_inds = inds;
-                    } else {
-                        if (inds[0].fitness.betterThan(best_inds[0].fitness)) {
-                            best_inds = inds;
-                        }
+                    if (best_inds[0]==null || inds[0].fitness.betterThan(best_inds[0].fitness)) {
+                        best_inds[0] = (Individual) (inds[0].clone());
+                        best_inds[1] = (Individual) (inds[1].clone());
                     }
                     evaluations++;
                 }
@@ -399,12 +398,9 @@ public class CooperativeCoevolutionaryEvaluator extends Evaluator
                     GPStats.fitnessesPerGeneration[state.generation][0][i+(j*state.population.subpops[j].individuals.length)] = -JSSInd.fitness.fitness();
                     GPStats.fitnessesPerGeneration[state.generation][1][i+(j*state.population.subpops[j].individuals.length)] = -LSSInd.fitness.fitness();
                     // here I add the information of the best ind
-                    if (best_inds[0] == null) {
-                        best_inds = inds;
-                    } else {
-                        if (inds[0].fitness.betterThan(best_inds[0].fitness)) {
-                            best_inds = inds;
-                        }
+                    if (best_inds[0]==null || inds[0].fitness.betterThan(best_inds[0].fitness)) {
+                        best_inds[0] = (Individual) (inds[0].clone());
+                        best_inds[1] = (Individual) (inds[1].clone());
                     }
                     evaluations++;
                 }
@@ -430,12 +426,9 @@ public class CooperativeCoevolutionaryEvaluator extends Evaluator
                     GPStats.fitnessesPerGeneration[state.generation][0][i+(j*state.population.subpops[j].individuals.length)] = -JSSInd.fitness.fitness();
                     GPStats.fitnessesPerGeneration[state.generation][1][i+(j*state.population.subpops[j].individuals.length)] = -LSSInd.fitness.fitness();
                     // here I add the information of the best ind
-                    if (best_inds[0] == null) {
-                        best_inds = inds;
-                    } else {
-                        if (inds[0].fitness.betterThan(best_inds[0].fitness)) {
-                            best_inds = inds;
-                        }
+                    if (best_inds[0]==null || inds[0].fitness.betterThan(best_inds[0].fitness)) {
+                        best_inds[0] = (Individual) (inds[0].clone());
+                        best_inds[1] = (Individual) (inds[1].clone());
                     }
                     evaluations++;
                 }
@@ -461,12 +454,9 @@ public class CooperativeCoevolutionaryEvaluator extends Evaluator
                     GPStats.fitnessesPerGeneration[state.generation][0][i+(j*state.population.subpops[j].individuals.length)] = -JSSInd.fitness.fitness();
                     GPStats.fitnessesPerGeneration[state.generation][1][i+(j*state.population.subpops[j].individuals.length)] = -LSSInd.fitness.fitness();
                     // here I add the information of the best ind
-                    if (best_inds[0] == null) {
-                        best_inds = inds;
-                    } else {
-                        if (inds[0].fitness.betterThan(best_inds[0].fitness)) {
-                            best_inds = inds;
-                        }
+                    if (best_inds[0]==null || inds[0].fitness.betterThan(best_inds[0].fitness)) {
+                        best_inds[0] = (Individual) (inds[0].clone());
+                        best_inds[1] = (Individual) (inds[1].clone());
                     }
                     evaluations++;
                 }

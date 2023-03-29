@@ -99,6 +99,7 @@ public class CoevolutionStatistics extends Statistics implements SteadyStateStat
     public double[][][] fitnessesPerGenerationValidation;
     public String[][][] individualsPerGenerationValidation;
     public double[] elapsedTimeValidation;
+    public double[] executionTimePerGeneration;
     public static final String P_PATH_RESULTS = "path-results";
     public String pathResults;
 
@@ -150,6 +151,7 @@ public class CoevolutionStatistics extends Statistics implements SteadyStateStat
         fitnessesPerGenerationValidation = new double[state.numGenerations][state.population.subpops.length][GPstate.validationSet.instances.length+1];
         individualsPerGenerationValidation = new String[state.numGenerations][state.population.subpops.length][GPstate.validationSet.instances.length+1];
         elapsedTimeValidation = new double[GPstate.validationSet.instances.length];
+        executionTimePerGeneration = new double[state.numGenerations];
         // set up our best_of_run array -- can't do this in setup, because
         // we don't know if the number of subpopulations has been determined yet
         best_of_run = new Individual[state.population.subpops.length];
@@ -228,6 +230,9 @@ public class CoevolutionStatistics extends Statistics implements SteadyStateStat
         // workbook ececution time
         XSSFWorkbook workbookExecutionTime = new XSSFWorkbook();
         XSSFSheet sheetTestingExecutionTime = workbookExecutionTime.createSheet("testing");
+        // workbook evolutionary time
+        XSSFWorkbook workbookEvolutionaryTime = new XSSFWorkbook();
+        XSSFSheet sheetEvolutionaryTime = workbookEvolutionaryTime.createSheet("time_per_generation");
         int rowCount = 0;
         Row titleRowTestingExecutionTime = sheetTestingExecutionTime.createRow(rowCount);
         rowCount++;
@@ -239,6 +244,17 @@ public class CoevolutionStatistics extends Statistics implements SteadyStateStat
             cellTitleTrainingExecutionTime.setCellValue(GPstate.validationSet.instances[j].NPRODUCTS+"x"+GPstate.validationSet.instances[j].NMACHINES+"x"+GPstate.validationSet.instances[j].NPERIODS+" RS: "+GPstate.validationSet.instances[j].RANDOMSEED);
             Cell cellTrainingExecutionTime = rowTestingExecutionTime.createCell(j+1);
             cellTrainingExecutionTime.setCellValue(elapsedTimeValidation[j]);
+        }
+
+        rowCount = 0;
+        Row titleRowEvolutionaryTime = sheetEvolutionaryTime.createRow(rowCount);
+        rowCount++;
+        Row rowEvolutionaryTime = sheetEvolutionaryTime.createRow(rowCount);
+        for(int e=0;e<state.numGenerations;e++) {
+            Cell cellEvolutionaryTimeTitle = titleRowEvolutionaryTime.createCell(e);
+            cellEvolutionaryTimeTitle.setCellValue(e);
+            Cell cellEvolutionaryTime = rowEvolutionaryTime.createCell(e);
+            cellEvolutionaryTime.setCellValue(executionTimePerGeneration[e]);
         }
 
         if (doFinal) state.output.println("\nBest Individual of Run:",statisticslog);
@@ -343,6 +359,9 @@ public class CoevolutionStatistics extends Statistics implements SteadyStateStat
             FileOutputStream outPathExecutionTime = new FileOutputStream(new File(pathResults+"run"+currentJob+"/" +"execution_time_validation.xlsx"));
             workbookExecutionTime.write(outPathExecutionTime);
             outPathExecutionTime.close();
+            FileOutputStream outPathEvolutionaryTime = new FileOutputStream(new File(pathResults+"run"+currentJob+"/" +"evolutionary_time.xlsx"));
+            workbookEvolutionaryTime.write(outPathEvolutionaryTime);
+            outPathEvolutionaryTime.close();
             //System.out.println("schedule.xlsx written successfully on disk.");
         } catch (Exception e) {
             e.printStackTrace();

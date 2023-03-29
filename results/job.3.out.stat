@@ -1,0 +1,64 @@
+
+Generation: 0
+Best Individual:
+Subpopulation 0:
+Evaluated: true
+Fitness: -1201.13
+Tree 0:
+ RPT
+Subpopulation 1:
+Evaluated: true
+Fitness: -1201.13
+Tree 0:
+ CLS
+
+Generation: 1
+Best Individual:
+Subpopulation 0:
+Evaluated: true
+Fitness: -1201.13
+Tree 0:
+ RPT
+Subpopulation 1:
+Evaluated: true
+Fitness: -1201.13
+Tree 0:
+ CLS
+
+Generation: 2
+Best Individual:
+Subpopulation 0:
+Evaluated: true
+Fitness: -1201.13
+Tree 0:
+ RPT
+Subpopulation 1:
+Evaluated: true
+Fitness: -1201.13
+Tree 0:
+ CLS
+
+Generation: 3
+Best Individual:
+Subpopulation 0:
+Evaluated: true
+Fitness: -1201.13
+Tree 0:
+ RPT
+Subpopulation 1:
+Evaluated: true
+Fitness: -1201.13
+Tree 0:
+ CLS
+
+Best Individual of Run:
+Subpopulation 0:
+Evaluated: true
+Fitness: -1201.13
+Tree 0:
+ RPT
+Subpopulation 1:
+Evaluated: true
+Fitness: -1201.13
+Tree 0:
+ CLS

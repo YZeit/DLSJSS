@@ -10,20 +10,27 @@ import java.util.Arrays;
 
 public class Instance {
     public int[][] demands;
+    public int[][] actualDemands;
     public int[][] routings;
     public double[][] processingTime;
     public double[] capacity;
     public double[] productionCosts;
     public int[] holdingCosts;
+    public int[] backlogCosts;
     public int[] setupCosts;
     public int[] setupTimes;
     public int NPRODUCTS;
     public int NMACHINES;
     public int NPERIODS;
+    public int NSCENARIO;
     public double capacityTightness;
     public int RANDOMSEED;
     public double optimum;
+    public double optimum_deterministic;
+    public double optimum_stochastic;
     public double[] solution;
+    public double[] solution_deterministic;
+    public double[] solution_stochastic;
 
     public Object clone()
     {
@@ -32,29 +39,38 @@ public class Instance {
         { throw new InternalError(); } // never happens
     }
 
-    public void setup(EvolutionState state, int nProducts, int nMachines, int nPeriods, int RandomSeed) throws IOException, InvalidFormatException {
+    public void setup(EvolutionState state, int nProducts, int nMachines, int nPeriods, int RandomSeed, int nScenario, String path) throws IOException, InvalidFormatException {
         NPRODUCTS = nProducts;
         NMACHINES = nMachines;
         NPERIODS = nPeriods;
         RANDOMSEED = RandomSeed;
+        NSCENARIO = nScenario;
         //this.capacityTightness = CapacityTightness;
         Parameter p = new Parameter("path-instances");
         String pathInstances = state.parameters.getString(p, (Parameter) null);
         // load input data from excel
-        String FILE_PATH = pathInstances + "rs" + RandomSeed +"/"+nProducts+"x"+nMachines+"x"+nPeriods+"/results.xlsx";
-
+        String FILE_PATH = pathInstances + nProducts+"x"+nMachines+"x"+nPeriods+".xlsx";
         demands = ExcelReader.readInputDataArrayInt(FILE_PATH, "demands");
+        //System.out.println("Demand: " + "scenario" + nScenario + Arrays.deepToString(demands));
+        actualDemands = new int[nProducts][nPeriods];
+        for (int i =0; i<nPeriods; i++){
+            String FILE_PATH_SCENARIO = path + "stage_" + i + "/scenario_" + nScenario + ".xlsx";
+            int[] currentDemand = ExcelReader.readInputDataListInt(FILE_PATH_SCENARIO, "demands");
+            for (int j =0; j<nProducts; j++){
+                actualDemands[j][i] = currentDemand[j];
+            }
+        }
+        //System.out.println("loaded Demand: " + "scenario" + nScenario + Arrays.deepToString(actualDemands));
         routings = ExcelReader.readInputDataArrayInt(FILE_PATH, "routings");
         processingTime = ExcelReader.readInputDataArrayDouble(FILE_PATH, "processing_time");
         capacity = ExcelReader.readInputDataListDouble(FILE_PATH, "period_length");
-        solution = ExcelReader.readInputDataListDouble(FILE_PATH, "solution");
-        optimum = solution[0];
         // load static data
         int[] staticData = ExcelReader.readInputDataListInt(FILE_PATH, "static_parameters");
         setupTimes = new int[nProducts];
         setupCosts = new int[nProducts];
         productionCosts = new double[nProducts];
         holdingCosts = new int[nProducts];
+        backlogCosts = new int[nProducts];
         // initialize setup times
         for (int i =0; i<nProducts; i++){
             setupTimes[i] = staticData[0]; // for all operations equal 10
@@ -75,6 +91,12 @@ public class Instance {
         for (int i =0; i<nProducts; i++){
             holdingCosts[i] = staticData[3];
         }
+
+        // initialize holding costs
+        for (int i =0; i<nProducts; i++){
+            backlogCosts[i] = staticData[4];
+        }
+        //System.out.println("demands: " + Arrays.deepToString(demands));
     }
 
     public void print(){

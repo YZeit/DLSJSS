@@ -123,6 +123,8 @@ gp.fs.1.func.29 = dlsjss.functions.Max
 gp.fs.1.func.29.nc = nc2
 gp.fs.1.func.30 = dlsjss.functions.Ifte
 gp.fs.1.func.30.nc = nc3
+gp.fs.1.func.31 = dlsjss.functions.BC
+gp.fs.1.func.31.nc = nc0
 
 
 #gp.fs.1.func.8 = functions.ATCC

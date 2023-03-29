@@ -9,12 +9,14 @@ import java.io.IOException;
 public class InstanceSetFull {
     public static final String P_SIZE = "size";
     public static final String P_INSTANCESIZE = "instance-size";
+    public static final String P_SCENARIOSIZE = "scenariosize";
     public static final String P_RANDOMSEED = "randomseed";
     public static final String P_PRODUCTS = "products-list";
     public static final String P_MACHINES = "machines-list";
     public static final String P_PERIODS = "periods-list";
 
     public int size;
+    public int scnearioSize;
     public int instanceSize;
     public int[] nProducts;
     public int[] nMachines;
@@ -47,6 +49,11 @@ public class InstanceSetFull {
         if (instanceSize==0) // uh oh
             state.output.fatal("instance set size must be >0.\n",base.push(P_INSTANCESIZE));
 
+        // get size of scenarios training
+        p = base.push(P_SCENARIOSIZE);
+        scnearioSize = state.parameters.getInt(p,null,1);
+        if (scnearioSize==0) // uh oh
+            state.output.fatal("scenariosize training/validation set size must be >0.\n",base.push(P_SCENARIOSIZE));
 
         // get number of Products from the parameters
         //p = new Parameter(P_PRODUCTS);
@@ -81,7 +88,9 @@ public class InstanceSetFull {
         nPeriods = new int[instanceSize];
             // assign random seeds to the instances
             if (set == "training") {
-                CCstate.trainingSet.instances = new Instance[size*instanceSize];
+                p = new Parameter("path-instances-training");
+                String pathInstances = state.parameters.getString(p, (Parameter) null);
+                CCstate.trainingSet.instances = new Instance[size*instanceSize*scnearioSize];
                 for (int y=0; y<instanceSize; y++) {
                     p = base.push(P_PRODUCTS).push("" + y);
                     nProducts[y] = state.parameters.getInt(p, null, 0);
@@ -92,13 +101,17 @@ public class InstanceSetFull {
                     for (int x = 0; x < size; x++) {
                         p = base.push(P_RANDOMSEED).push("" + x);
                         randomSeeds[x] = state.parameters.getInt(p, null, 0);
-                        CCstate.trainingSet.instances[x+(size*y)] = new Instance();
-                        CCstate.trainingSet.instances[x+(size*y)].setup(state, nProducts[y], nMachines[y], nPeriods[y], randomSeeds[x]);
+                        for (int z=0; z<scnearioSize; z++){
+                            CCstate.trainingSet.instances[x+(size*y)+(z)] = new Instance();
+                            CCstate.trainingSet.instances[x+(size*y)+(z)].setup(state, nProducts[y], nMachines[y], nPeriods[y], randomSeeds[x], z, pathInstances);
+                        }
                     }
                 }
             }
             if (set == "validation") {
-                CCstate.validationSet.instances = new Instance[size*instanceSize];
+                p = new Parameter("path-instances-validation");
+                String pathInstances = state.parameters.getString(p, (Parameter) null);
+                CCstate.validationSet.instances = new Instance[size*instanceSize*scnearioSize];
                 for (int y=0; y<instanceSize; y++) {
                     p = base.push(P_PRODUCTS).push("" + y);
                     nProducts[y] = state.parameters.getInt(p, null, 0);
@@ -109,8 +122,10 @@ public class InstanceSetFull {
                     for (int x = 0; x < size; x++) {
                         p = base.push(P_RANDOMSEED).push("" + x);
                         randomSeeds[x] = state.parameters.getInt(p, null, 0);
-                        CCstate.validationSet.instances[x+(size*y)] = new Instance();
-                        CCstate.validationSet.instances[x+(size*y)].setup(state, nProducts[y], nMachines[y], nPeriods[y], randomSeeds[x]);
+                        for (int z=0; z<scnearioSize; z++) {
+                            CCstate.validationSet.instances[x + (size * y)+(z)] = new Instance();
+                            CCstate.validationSet.instances[x + (size * y) + (z)].setup(state, nProducts[y], nMachines[y], nPeriods[y], randomSeeds[x], z, pathInstances);
+                        }
                     }
                 }
             }

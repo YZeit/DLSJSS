@@ -67,7 +67,9 @@ public class MainLotsizingFinal {
         //        "Experiment/Experiment1/rs"+RandomSeed+"/"+numberProducts+"x"+numberMachines+"x"+numberPeriods+"x"+capacityTightness+"/results.xlsx";
 
         //int[][] demands = ExcelReader.readInputDataArrayInt(FILE_PATH, "demands");
-        int[][] demands = currentInstance.demands;
+        int[][] originalDemands = currentInstance.demands;
+        int[][] demands = new int[numberProducts][numberPeriods];
+        int[][] actualDemands = currentInstance.actualDemands;
         //int[][] routings = ExcelReader.readInputDataArrayInt(FILE_PATH, "routings");
         int[][] routings = currentInstance.routings;
         //double[][] processingTime = ExcelReader.readInputDataArrayDouble(FILE_PATH, "processing_time");
@@ -81,6 +83,7 @@ public class MainLotsizingFinal {
         double[] productionCosts = currentInstance.productionCosts;
         //int[] holdingCosts = new int[numberProducts]; // holding costs per product
         int[] holdingCosts = currentInstance.holdingCosts;
+        int[] backlogCosts = currentInstance.backlogCosts;
         //int[] setupCosts = new int[numberProducts]; // setup costs per product
         int[] setupCosts = currentInstance.setupCosts;
         //int[] setupTimes = new int[numberProducts]; // setup times per product
@@ -192,93 +195,111 @@ public class MainLotsizingFinal {
         // initialize production quantities array (lotsizes)
         int[][] productionQuantities = new int[numberProducts][numberPeriods];
         // set random seed
-        int randomSeed = 100;
+        int randomSeed = 1;
 
-        //System.out.println("number Periods" + numberPeriods);
-        // loop over all periods
-        first:
-        for (int l=0; l<numberPeriods; l++){
-            //System.out.println("period: " + l);
-            // get initial production quantities
-            productionQuantities = LotSizingFunctionsFinal.generateInitialSolution(numberProducts, l, demands, inventory, productionQuantities);
-            //System.out.println("finished the initital solution generation");
-            //System.out.println("production quantities: " + Arrays.deepToString(productionQuantities));
-            // feasibility check -> get residual capacity based on the makespan of the schedule
-            residualCapacity[l] = LotSizingFunctionsFinal.feasibilityCheck(numberMachines, numberProducts,
-                    productionQuantities, processingTime, routings, capacity[l], setupTimes, l,
-                    JSSRule, input, state, threadnum, stack, problem, false, false);
-            //System.out.println("residual capa: " + Arrays.toString(residualCapacity));
-            //System.out.println("production quantities: " + Arrays.deepToString(productionQuantities));
-            //System.out.println("residual capacity: " + residualCapacity[l]);
-            if (residualCapacity[l]>0) {
-                // LotIncrease
-                //System.out.println("Lot increasing procedure");
-                productionQuantities = LotSizingFunctionsFinal.increaseLotsize(numberMachines,numberProducts,productionQuantities,
-                        processingTime,routings,capacity,residualCapacity,l,numberPeriods,demands,setupCosts,holdingCosts,inventory,
-                        setupTimes, JSSRule, LSSRule, input, state, threadnum, stack, problem);
-                // update inventory
-                for (int i=0; i<numberProducts;i++){
-                    if (l>0){
-                        inventory[i][l] = inventory[i][l-1] + productionQuantities[i][l] - demands[i][l];
+        Random randomobj = new Random();
+        randomobj.setSeed(randomSeed);
+
+        // loop over all periods (first loop, while in each iteration the demands are updated according to the fluctuations)
+        for (int x=0; x<numberPeriods; x++){
+            // update the demands
+            for (int i=0; i<numberProducts; i++) {
+                for (int y=x; y<numberPeriods; y++) {
+                    if (x==y){
+                        //demands[i][y] = getRandomNumber(minValues[i][y], maxValues[i][y], randomobj);
+                        demands[i][y] = actualDemands[i][y];
                     }
                     else {
-                        inventory[i][l] =  productionQuantities[i][l] - demands[i][l];
+                        demands[i][y] = originalDemands[i][y];
                     }
                 }
-                //System.out.println("inventorys: " + Arrays.deepToString(inventory));
+            }
+            // loop over all periods
+            first:
+            for (int l=x; l<numberPeriods; l++){
+                //System.out.println("period: " + l);
+                // get initial production quantities
+                productionQuantities = LotSizingFunctionsFinal.generateInitialSolution(numberProducts, l, demands, inventory, productionQuantities);
+                //System.out.println("finished the initital solution generation");
+                //System.out.println("production quantities: " + Arrays.deepToString(productionQuantities));
+                // feasibility check -> get residual capacity based on the makespan of the schedule
+                residualCapacity[l] = LotSizingFunctionsFinal.feasibilityCheck(numberMachines, numberProducts,
+                        productionQuantities, processingTime, routings, capacity[l], setupTimes, l,
+                        JSSRule, input, state, threadnum, stack, problem, false, false);
+                //System.out.println("residual capa: " + Arrays.toString(residualCapacity));
+                //System.out.println("production quantities: " + Arrays.deepToString(productionQuantities));
+                //System.out.println("residual capacity: " + residualCapacity[l]);
+                if (residualCapacity[l]>0) {
+                    // LotIncrease
+                    //System.out.println("Lot increasing procedure");
+                    productionQuantities = LotSizingFunctionsFinal.increaseLotsize(numberMachines,numberProducts,productionQuantities,
+                            processingTime,routings,capacity,residualCapacity,l,numberPeriods,demands,setupCosts,holdingCosts,inventory,
+                            setupTimes, backlogCosts, JSSRule, LSSRule, input, state, threadnum, stack, problem);
+                    // update inventory
+                    for (int i=0; i<numberProducts;i++){
+                        if (l>0){
+                            inventory[i][l] = inventory[i][l-1] + productionQuantities[i][l] - demands[i][l];
+                        }
+                        else {
+                            inventory[i][l] =  productionQuantities[i][l] - demands[i][l];
+                        }
+                    }
+                    //System.out.println("inventorys: " + Arrays.deepToString(inventory));
 
-            } else {
-                // backtrack mechanism
-                //System.out.println("Backtrack mechanism.");
-                productionQuantities = LotSizingFunctionsFinal.backtrackMechanism(numberMachines,numberProducts,productionQuantities,
-                        processingTime,routings,capacity[l],residualCapacity,l,numberPeriods,demands,setupCosts,holdingCosts,inventory,
-                        setupTimes, JSSRule, input, state, threadnum, stack, problem,currentInstance);
-                // check if the backtrack mechanism leads to infeasible solution (infeasible heuristic)
-                if (productionQuantities[0][0] == 9999){
-                    break first;
-                }
-                // update inventory
-                for (int i=0; i<numberProducts;i++){
-                    if (l>0){
-                        inventory[i][l] = inventory[i][l-1] + productionQuantities[i][l] - demands[i][l];
+                } else {
+                    // backtrack mechanism
+                    //System.out.println("Backtrack mechanism.");
+                    productionQuantities = LotSizingFunctionsFinal.backtrackMechanism(numberMachines,numberProducts,productionQuantities,
+                            processingTime,routings,capacity[l],residualCapacity,l,numberPeriods,demands,setupCosts,holdingCosts,inventory,
+                            setupTimes, JSSRule, input, state, threadnum, stack, problem,currentInstance);
+                    // update inventory
+                    for (int i=0; i<numberProducts;i++){
+                        if (l>0){
+                            inventory[i][l] = inventory[i][l-1] + productionQuantities[i][l] - demands[i][l];
+                        }
+                        else {
+                            inventory[i][l] =  productionQuantities[i][l] - demands[i][l];
+                        }
                     }
-                    else {
-                        inventory[i][l] =  productionQuantities[i][l] - demands[i][l];
-                    }
+                    //System.out.println("inventorys: " + Arrays.deepToString(inventory));
                 }
-                //System.out.println("inventorys: " + Arrays.deepToString(inventory));
             }
         }
+        //System.out.println("demands (before): " + Arrays.deepToString(originalDemands));
         //System.out.println("demands: " + Arrays.deepToString(demands));
         //System.out.println("production quantities: " + Arrays.deepToString(productionQuantities));
 
         // get final results (total costs)
         // production costs, setup costs, and inventory holding costs
         double totalCosts = 0;
-        if (productionQuantities[0][0] != 9999) {
-            int totalSetupCosts = 0;
-            int totalHoldingCosts = 0;
-            int totalProductionCosts = 0;
-            for (int l=0; l<numberPeriods; l++){
-                for (int i =0; i<numberProducts; i++){
-                    if (productionQuantities[i][l] > 0){
-                        totalSetupCosts += setupCosts[i];
-                        totalProductionCosts += productionQuantities[i][l] * productionCosts[i];
-                    }
-                    if (inventory[i][l] > 0){
-                        totalHoldingCosts += inventory[i][l] * holdingCosts[i];
-                    }
+
+        int totalSetupCosts = 0;
+        int totalHoldingCosts = 0;
+        int totalProductionCosts = 0;
+        int totalBacklogCosts = 0;
+        for (int l=0; l<numberPeriods; l++){
+            for (int i =0; i<numberProducts; i++){
+                if (productionQuantities[i][l] > 0){
+                    totalSetupCosts += setupCosts[i];
+                    totalProductionCosts += productionQuantities[i][l] * productionCosts[i];
+                }
+                if (inventory[i][l] > 0){
+                    totalHoldingCosts += inventory[i][l] * holdingCosts[i];
+                }
+                if (inventory[i][l] < 0){
+                    totalBacklogCosts += -inventory[i][l] * backlogCosts[i];
                 }
             }
+        }
 
-            // loop over all periods to get the final residual capacities
-            for (int l=0; l<numberPeriods; l++) {
-                //System.out.println("period: " + l);
-                // feasibility check -> get residual capacity based on the makespan of the schedule
-                residualCapacity[l] = LotSizingFunctionsFinal.feasibilityCheck(numberMachines, numberProducts,
-                        productionQuantities, processingTime, routings, capacity[l], setupTimes, l,
-                        JSSRule, input, state, threadnum, stack, problem,false, false);
-            }
+        // loop over all periods to get the final residual capacities
+        for (int l=0; l<numberPeriods; l++) {
+            //System.out.println("period: " + l);
+            // feasibility check -> get residual capacity based on the makespan of the schedule
+            residualCapacity[l] = LotSizingFunctionsFinal.feasibilityCheck(numberMachines, numberProducts,
+                    productionQuantities, processingTime, routings, capacity[l], setupTimes, l,
+                    JSSRule, input, state, threadnum, stack, problem,false, false);
+        }
         /*
         System.out.println("total production costs: " + totalProductionCosts);
         System.out.println("total setup costs: " + totalSetupCosts);
@@ -286,18 +307,11 @@ public class MainLotsizingFinal {
         System.out.println("sum of all costs: " + (totalHoldingCosts+totalSetupCosts+totalProductionCosts));
         System.out.println("residual capacities: " + Arrays.toString(residualCapacityList));
          */
-            long elapsedTime = System.nanoTime() - startTime;
-            //System.out.println("Total execution time in sec: "
-            //        + elapsedTime*0.000000001);
+        long elapsedTime = System.nanoTime() - startTime;
+        //System.out.println("Total execution time in sec: "
+        //        + elapsedTime*0.000000001);
+        totalCosts = totalHoldingCosts+totalSetupCosts+totalProductionCosts+totalBacklogCosts;
 
-            totalCosts = totalHoldingCosts+totalSetupCosts+totalProductionCosts;
-        } else {
-            totalCosts = 99999999;
-        }
-        if (totalCosts==99999999){
-            System.out.println("SOLUTION INFEASIBLE");
-            System.out.println("total costs: " +totalCosts);
-        }
         return totalCosts;
     }
 }
