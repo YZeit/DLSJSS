@@ -2,7 +2,11 @@ package dlsjss.util;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xddf.usermodel.XDDFSolidFillProperties;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -12,13 +16,16 @@ public class ExcelReader {
     public static int[][] readInputDataArrayInt(String SAMPLE_XLSX_FILE_PATH, String SHEET_NAME) throws IOException, InvalidFormatException {
 
         // Creating a Workbook from an Excel file (.xls or .xlsx)
-        Workbook workbook = WorkbookFactory.create(new File(SAMPLE_XLSX_FILE_PATH));
+        //Workbook workbook = WorkbookFactory.create(new File(SAMPLE_XLSX_FILE_PATH));
+        File file = new File(SAMPLE_XLSX_FILE_PATH);
+        FileInputStream fis = new FileInputStream(file);
+        XSSFWorkbook workbook = new XSSFWorkbook(fis);
 
         // Getting the Sheet
         Sheet sheet = workbook.getSheet(SHEET_NAME);
 
         // Create a DataFormatter to format and get each cell's value as String
-        DataFormatter dataFormatter = new DataFormatter();
+        //DataFormatter dataFormatter = new DataFormatter();
 
         int noOfColumns = sheet.getRow(0).getPhysicalNumberOfCells();
         int noOfRows = sheet.getPhysicalNumberOfRows() - 1;
@@ -38,6 +45,7 @@ public class ExcelReader {
 
         // Closing the workbook
         workbook.close();
+        fis.close();
 
         return array;
     }
@@ -45,13 +53,16 @@ public class ExcelReader {
     public static double[][] readInputDataArrayDouble(String SAMPLE_XLSX_FILE_PATH, String SHEET_NAME) throws IOException, InvalidFormatException {
 
         // Creating a Workbook from an Excel file (.xls or .xlsx)
-        Workbook workbook = WorkbookFactory.create(new File(SAMPLE_XLSX_FILE_PATH));
+        //Workbook workbook = WorkbookFactory.create(new File(SAMPLE_XLSX_FILE_PATH));
+        File file = new File(SAMPLE_XLSX_FILE_PATH);
+        FileInputStream fis = new FileInputStream(file);
+        XSSFWorkbook workbook = new XSSFWorkbook(fis);
 
         // Getting the Sheet
         Sheet sheet = workbook.getSheet(SHEET_NAME);
 
         // Create a DataFormatter to format and get each cell's value as String
-        DataFormatter dataFormatter = new DataFormatter();
+        //DataFormatter dataFormatter = new DataFormatter();
 
         int noOfColumns = sheet.getRow(0).getPhysicalNumberOfCells();
         int noOfRows = sheet.getPhysicalNumberOfRows() - 1;
@@ -70,6 +81,7 @@ public class ExcelReader {
 
         // Closing the workbook
         workbook.close();
+        fis.close();
 
         return array;
     }
@@ -77,13 +89,16 @@ public class ExcelReader {
     public static double[] readInputDataListDouble(String SAMPLE_XLSX_FILE_PATH, String SHEET_NAME) throws IOException, InvalidFormatException {
 
         // Creating a Workbook from an Excel file (.xls or .xlsx)
-        Workbook workbook = WorkbookFactory.create(new File(SAMPLE_XLSX_FILE_PATH));
+        //Workbook workbook = WorkbookFactory.create(new File(SAMPLE_XLSX_FILE_PATH));
+        File file = new File(SAMPLE_XLSX_FILE_PATH);
+        FileInputStream fis = new FileInputStream(file);
+        XSSFWorkbook workbook = new XSSFWorkbook(fis);
 
         // Getting the Sheet
         Sheet sheet = workbook.getSheet(SHEET_NAME);
 
         // Create a DataFormatter to format and get each cell's value as String
-        DataFormatter dataFormatter = new DataFormatter();
+        //DataFormatter dataFormatter = new DataFormatter();
 
         int noOfColumns = sheet.getRow(0).getPhysicalNumberOfCells();
         int noOfRows = sheet.getPhysicalNumberOfRows() - 1;
@@ -102,6 +117,7 @@ public class ExcelReader {
 
         // Closing the workbook
         workbook.close();
+        fis.close();
 
         return list;
     }
@@ -109,13 +125,16 @@ public class ExcelReader {
     public static int[] readInputDataListInt(String SAMPLE_XLSX_FILE_PATH, String SHEET_NAME) throws IOException, InvalidFormatException {
 
         // Creating a Workbook from an Excel file (.xls or .xlsx)
-        Workbook workbook = WorkbookFactory.create(new File(SAMPLE_XLSX_FILE_PATH));
+        //Workbook workbook = WorkbookFactory.create(new File(SAMPLE_XLSX_FILE_PATH));
+        File file = new File(SAMPLE_XLSX_FILE_PATH);
+        FileInputStream fis = new FileInputStream(file);
+        XSSFWorkbook workbook = new XSSFWorkbook(fis);
 
         // Getting the Sheet
         Sheet sheet = workbook.getSheet(SHEET_NAME);
 
         // Create a DataFormatter to format and get each cell's value as String
-        DataFormatter dataFormatter = new DataFormatter();
+        //DataFormatter dataFormatter = new DataFormatter();
 
         int noOfColumns = sheet.getRow(0).getPhysicalNumberOfCells();
         int noOfRows = sheet.getPhysicalNumberOfRows() - 1;
@@ -135,6 +154,7 @@ public class ExcelReader {
 
         // Closing the workbook
         workbook.close();
+        fis.close();
 
         return list;
     }
