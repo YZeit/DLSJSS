@@ -128,7 +128,7 @@ public class LSJSS_GPHH extends GPProblemCOEV implements GroupedProblemForm {
         for (int r=0; r<nState.trainingSet.instances.length; r++) {
             Instance currentInstance = nState.trainingSet.instances[r];
             //nState.trainingSet.instances[r].print();
-            System.out.println("instance: " + r);
+            //System.out.println("instance: " + r);
             //currentInstance.print();
             try {
                 result += MainLotsizingFinal.run((GPIndividual) ind[0], (GPIndividual) ind[1], input, state, threadnum, stack, this,
@@ -201,7 +201,7 @@ public class LSJSS_GPHH extends GPProblemCOEV implements GroupedProblemForm {
         //System.out.println("validation set size:" + nState.validationSet.instances.length);
         for (int r=0; r<(nState.validationSet.instances.length); r++) {
             Instance currentInstance = nState.validationSet.instances[r];
-            System.out.println("instance: " + r);
+            //System.out.println("instance: " + r);
             //currentInstance.print();
             try {
                 long startTime = System.nanoTime();

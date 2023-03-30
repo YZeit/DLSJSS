@@ -196,7 +196,7 @@ public class CoevolutionStatistics extends Statistics implements SteadyStateStat
                 CoevolutionState GPstate = (CoevolutionState) state;
                 CoevolutionStatistics nStateStatistics = (CoevolutionStatistics) state.statistics;
                 state.output.message("Subpop " + x + " performance of best individual of generation on validation set: " +
-                        nStateStatistics.fitnessesPerGenerationValidation[GPstate.generation][x][GPstate.validationSet.size]);
+                        nStateStatistics.fitnessesPerGenerationValidation[GPstate.generation][x][GPstate.validationSet.instances.length]);
             }
 
 
