@@ -18,7 +18,8 @@ public class Run {
     public static void execute(String pathToParams, String pathToFiles, String pathToInstances,
                                String pathToInstancesTraining, String pathToInstancesValidation,
                                int numberOfJobs, int nGenerations, int nPopulation, int nProducts,
-                               int nMachines, int nPeriods, int nTrainSetVariety, int nValidationSetVariety) {
+                               int nMachines, int nPeriods, int nTrainSetVariety, int nValidationSetVariety,
+                               boolean randTrain) {
         String[] runConfig = new String[] {
                 Evolve.A_FILE, pathToParams,
                 "-p", ("stat.file=$"+pathToFiles+"out.stat"),
@@ -35,6 +36,7 @@ public class Run {
                 "-p", ("periods="+nPeriods),
                 "-p", ("trainingset.instance-size="+nTrainSetVariety),
                 "-p", ("validationset.instance-size="+nValidationSetVariety),
+                "-p", ("random-training-instance-selection="+randTrain),
         };
         String[] trainSetConfig = new String[nTrainSetVariety*2*6];
         for (int i=0; i<nTrainSetVariety; i++) {

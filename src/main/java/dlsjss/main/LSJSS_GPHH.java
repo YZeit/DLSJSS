@@ -5,6 +5,7 @@ import ec.*;
 import ec.gp.*;
 import ec.simple.*;
 import ec.coevolve.*;
+import ec.util.Parameter;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import dlsjss.problem.CoevolutionState;
 import dlsjss.problem.CoevolutionStatistics;
@@ -13,6 +14,8 @@ import dlsjss.rule.GPProblemCOEV;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 
 public class LSJSS_GPHH extends GPProblemCOEV implements GroupedProblemForm {
@@ -118,6 +121,10 @@ public class LSJSS_GPHH extends GPProblemCOEV implements GroupedProblemForm {
         //currentX = state.random[threadnum].nextDouble();
         //currentY = state.random[threadnum].nextDouble();
 
+        // get information on the random train instance selection
+        Parameter p = new Parameter("random-training-instance-selection");
+        boolean randTrainInstSel = state.parameters.getBoolean(p, null,false);
+
         // this I don't need, it's just here for to compare and evaluate the difference
         //expectedResult = currentX*currentX*currentY + currentX*currentY + currentY;
 
@@ -125,13 +132,13 @@ public class LSJSS_GPHH extends GPProblemCOEV implements GroupedProblemForm {
         double result = 0.0;
         CoevolutionState nState = (CoevolutionState)state;
         //System.out.println("training set size:" + nState.trainingSet.instances.length);
-        for (int r=0; r<nState.trainingSet.instances.length; r++) {
-            Instance currentInstance = nState.trainingSet.instances[r];
-            //nState.trainingSet.instances[r].print();
-            //System.out.println("instance: " + r);
-            //currentInstance.print();
+        double averageCosts = 0.0;
+        if (randTrainInstSel) {
+            // random instance selection from the training set
+            int randomNum = ThreadLocalRandom.current().nextInt(0, nState.trainingSet.instances.length);
+            Instance currentInstance = nState.trainingSet.instances[randomNum];
             try {
-                result += MainLotsizingFinal.run((GPIndividual) ind[0], (GPIndividual) ind[1], input, state, threadnum, stack, this,
+                averageCosts = MainLotsizingFinal.run((GPIndividual) ind[0], (GPIndividual) ind[1], input, state, threadnum, stack, this,
                         currentInstance);
                 //gap += (result/currentInstance.optimum_stochastic)-1;
                 //System.out.println("result: "+result);
@@ -141,7 +148,27 @@ public class LSJSS_GPHH extends GPProblemCOEV implements GroupedProblemForm {
                 throw new RuntimeException(e);
             }
         }
-        double averageCosts = result/nState.trainingSet.instances.length;
+        else {
+            // full set of instances
+            for (int r=0; r<nState.trainingSet.instances.length; r++) {
+                Instance currentInstance = nState.trainingSet.instances[r];
+                //nState.trainingSet.instances[r].print();
+                //System.out.println("instance: " + r);
+                //currentInstance.print();
+                try {
+                    result += MainLotsizingFinal.run((GPIndividual) ind[0], (GPIndividual) ind[1], input, state, threadnum, stack, this,
+                            currentInstance);
+                    //gap += (result/currentInstance.optimum_stochastic)-1;
+                    //System.out.println("result: "+result);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                } catch (InvalidFormatException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            averageCosts = result/nState.trainingSet.instances.length;
+        }
+
         //double averageGap = gap/nState.trainingSet.instances.length;
         //System.out.println("total costs: " + averageCosts);
 
