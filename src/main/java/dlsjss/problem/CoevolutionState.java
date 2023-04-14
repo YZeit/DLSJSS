@@ -55,6 +55,8 @@ public class CoevolutionState extends EvolutionState
     public static final String P_TRAINING_SET = "trainingset";
     public static final String P_VALIDATION_SET = "validationset";
 
+    public int randNum;
+
 
     public void startFresh()
     {

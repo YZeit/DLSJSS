@@ -1,16 +1,26 @@
 package dlsjss.LSJSS.fixRule;
+
+import dlsjss.problem.InstanceFixRule;
+import ec.EvolutionState;
+import ec.gp.ADFStack;
+import ec.gp.GPIndividual;
+import dlsjss.main.DoubleData;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import dlsjss.problem.Instance;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
 public class MainLotsizingFixRule {
-    public static int getRandomNumber(int min, int max, Random randomobj) {
-        return (int) ((randomobj.nextDouble(1) * (max - min)) + min);
-    }
 
     public static List<Integer> makeSequence(int begin, int end) {
         List<Integer> ret = new ArrayList<>(end - begin + 1);
@@ -40,7 +50,8 @@ public class MainLotsizingFixRule {
         return newList;
     }
 
-    public static double run(Instance currentInstance) throws IOException, InvalidFormatException {
+    public static double run(InstanceFixRule currentInstance, int jss, int lss)
+            throws IOException, InvalidFormatException {
 
         //Random randomobj = new Random();
         //int seed = RandomSeed; // RandomSeed
@@ -59,24 +70,27 @@ public class MainLotsizingFixRule {
         //        "Experiment/Experiment1/rs"+RandomSeed+"/"+numberProducts+"x"+numberMachines+"x"+numberPeriods+"x"+capacityTightness+"/results.xlsx";
 
         //int[][] demands = ExcelReader.readInputDataArrayInt(FILE_PATH, "demands");
-        int[][] demands = currentInstance.demands.clone();
+        int[][] originalDemands = currentInstance.demands;
+        int[][] demands = new int[numberProducts][numberPeriods];
+        int[][] actualDemands = currentInstance.actualDemands;
         //int[][] routings = ExcelReader.readInputDataArrayInt(FILE_PATH, "routings");
-        int[][] routings = currentInstance.routings.clone();
+        int[][] routings = currentInstance.routings;
         //double[][] processingTime = ExcelReader.readInputDataArrayDouble(FILE_PATH, "processing_time");
-        double[][] processingTime = currentInstance.processingTime.clone();
+        double[][] processingTime = currentInstance.processingTime;
         int[][] inventory = new int[numberProducts][numberPeriods]; // inventory of each product at the end of each period
         //double[] capacity = ExcelReader.readInputDataListDouble(FILE_PATH, "period_length");
-        double[] capacity = currentInstance.capacity.clone();
+        double[] capacity = currentInstance.capacity;
 
         //double[] capacity = new double[numberPeriods]; // capacity per period (valid for all machines)
         //double[] productionCosts = new double[numberProducts]; // production costs per product
-        double[] productionCosts = currentInstance.productionCosts.clone();
+        double[] productionCosts = currentInstance.productionCosts;
         //int[] holdingCosts = new int[numberProducts]; // holding costs per product
-        int[] holdingCosts = currentInstance.holdingCosts.clone();
+        int[] holdingCosts = currentInstance.holdingCosts;
+        int[] backlogCosts = currentInstance.backlogCosts;
         //int[] setupCosts = new int[numberProducts]; // setup costs per product
-        int[] setupCosts = currentInstance.setupCosts.clone();
+        int[] setupCosts = currentInstance.setupCosts;
         //int[] setupTimes = new int[numberProducts]; // setup times per product
-        int[] setupTimes = currentInstance.setupTimes.clone();
+        int[] setupTimes = currentInstance.setupTimes;
         double[] residualCapacity = new double[numberPeriods]; // residual capacity for each period
         //double[][] processingTime = new double[numberProducts][numberMachines]; // processing time per product per machine
         //int[][] demands = new int[numberProducts][numberPeriods]; // demands per product per period
@@ -86,7 +100,7 @@ public class MainLotsizingFixRule {
         // initialize demands
         for (int i =0; i<numberProducts; i++){
             for (int l=0; l<numberPeriods; l++){
-                demands[i][l] = getRandomNumber(2,5,randomobj);
+                demands[i][l] = getRandomNumber(3,8,randomobj);
             }
         }
 
@@ -141,8 +155,6 @@ public class MainLotsizingFixRule {
             setupCosts[i] = 20;
         }
 
-
-
         // load static data
         int[] staticData = ExcelReader.readInputDataListInt(FILE_PATH, "static_parameters");
 
@@ -166,9 +178,7 @@ public class MainLotsizingFixRule {
         for (int i =0; i<numberProducts; i++){
             holdingCosts[i] = staticData[3];
         }
-
         */
-
 
         /*
         System.out.println("demands: " + Arrays.deepToString(demands));
@@ -179,68 +189,95 @@ public class MainLotsizingFixRule {
         System.out.println("setup costs: " + Arrays.toString(setupCosts));
         System.out.println("production costs: " + Arrays.toString(productionCosts));
         System.out.println("holding costs: " + Arrays.toString(holdingCosts));
+        System.out.println("residual capa: " + Arrays.toString(residualCapacity));
         */
         //measuring elapsed time using System.nanoTime
         long startTime = System.nanoTime();
         // initialize production quantities array (lotsizes)
         int[][] productionQuantities = new int[numberProducts][numberPeriods];
         // set random seed
-        int randomSeed = 100;
+        int randomSeed = 1;
 
-        // loop over all periods
-        for (int l=0; l<numberPeriods; l++){
-            //System.out.println("period: " + l);
-            // get initial production quantities
-            productionQuantities = LotSizingFunctionsFixRule.generateInitialSolution(numberProducts, l, demands, inventory, productionQuantities);
-            // feasibility check -> get residual capacity based on the makespan of the schedule
-            residualCapacity[l] = LotSizingFunctionsFixRule.feasibilityCheck(numberMachines, numberProducts,
-                    productionQuantities, processingTime, routings, capacity[l], setupTimes, l,
-                    false, false);
-            //System.out.println("production quantities: " + Arrays.deepToString(productionQuantities));
-            //System.out.println("residual capacity: " + residualCapacity);
-            if (residualCapacity[l]>0) {
-                // LotIncrease
-                //System.out.println("Lot increasing procedure");
-                productionQuantities = LotSizingFunctionsFixRule.increaseLotsize(numberMachines,numberProducts,productionQuantities,
-                        processingTime,routings,capacity,residualCapacity,l,numberPeriods,demands,setupCosts,holdingCosts,inventory,
-                        setupTimes);
-                // update inventory
-                for (int i=0; i<numberProducts;i++){
-                    if (l>0){
-                        inventory[i][l] = inventory[i][l-1] + productionQuantities[i][l] - demands[i][l];
+        Random randomobj = new Random();
+        randomobj.setSeed(randomSeed);
+
+        // loop over all periods (first loop, while in each iteration the demands are updated according to the fluctuations)
+        for (int x=0; x<numberPeriods; x++){
+            // update the demands
+            for (int i=0; i<numberProducts; i++) {
+                for (int y=x; y<numberPeriods; y++) {
+                    if (x==y){
+                        //demands[i][y] = getRandomNumber(minValues[i][y], maxValues[i][y], randomobj);
+                        demands[i][y] = actualDemands[i][y];
                     }
                     else {
-                        inventory[i][l] =  productionQuantities[i][l] - demands[i][l];
+                        demands[i][y] = originalDemands[i][y];
                     }
                 }
-                //System.out.println("inventorys: " + Arrays.deepToString(inventory));
+            }
+            // loop over all periods
+            first:
+            for (int l=x; l<numberPeriods; l++){
+                //System.out.println("period: " + l);
+                // get initial production quantities
+                productionQuantities = LotSizingFunctionsFixRule.generateInitialSolution(numberProducts, l, demands, inventory, productionQuantities);
+                //System.out.println("finished the initital solution generation");
+                //System.out.println("production quantities: " + Arrays.deepToString(productionQuantities));
+                // feasibility check -> get residual capacity based on the makespan of the schedule
+                residualCapacity[l] = LotSizingFunctionsFixRule.feasibilityCheck(numberMachines, numberProducts,
+                        productionQuantities, processingTime, routings, capacity[l], setupTimes, l,
+                        false, false, jss);
+                //System.out.println("residual capa: " + Arrays.toString(residualCapacity));
+                //System.out.println("production quantities: " + Arrays.deepToString(productionQuantities));
+                //System.out.println("residual capacity: " + residualCapacity[l]);
+                if (residualCapacity[l]>0) {
+                    // LotIncrease
+                    //System.out.println("Lot increasing procedure");
+                    productionQuantities = LotSizingFunctionsFixRule.increaseLotsize(numberMachines,numberProducts,productionQuantities,
+                            processingTime,routings,capacity,residualCapacity,l,numberPeriods,demands,setupCosts,holdingCosts,inventory,
+                            setupTimes, backlogCosts, lss, jss);
+                    // update inventory
+                    for (int i=0; i<numberProducts;i++){
+                        if (l>0){
+                            inventory[i][l] = inventory[i][l-1] + productionQuantities[i][l] - demands[i][l];
+                        }
+                        else {
+                            inventory[i][l] =  productionQuantities[i][l] - demands[i][l];
+                        }
+                    }
+                    //System.out.println("inventorys: " + Arrays.deepToString(inventory));
 
-            } else {
-                // backtrack mechanism
-                //System.out.println("Backtrack mechanism.");
-                productionQuantities = LotSizingFunctionsFixRule.backtrackMechanism(numberMachines,numberProducts,productionQuantities,
-                        processingTime,routings,capacity[l],residualCapacity,l,numberPeriods,demands,setupCosts,holdingCosts,inventory,
-                        setupTimes);
-                // update inventory
-                for (int i=0; i<numberProducts;i++){
-                    if (l>0){
-                        inventory[i][l] = inventory[i][l-1] + productionQuantities[i][l] - demands[i][l];
+                } else {
+                    // backtrack mechanism
+                    //System.out.println("Backtrack mechanism.");
+                    productionQuantities = LotSizingFunctionsFixRule.backtrackMechanism(numberMachines,numberProducts,productionQuantities,
+                            processingTime,routings,capacity[l],residualCapacity,l,numberPeriods,demands,setupCosts,holdingCosts,inventory,
+                            setupTimes, jss);
+                    // update inventory
+                    for (int i=0; i<numberProducts;i++){
+                        if (l>0){
+                            inventory[i][l] = inventory[i][l-1] + productionQuantities[i][l] - demands[i][l];
+                        }
+                        else {
+                            inventory[i][l] =  productionQuantities[i][l] - demands[i][l];
+                        }
                     }
-                    else {
-                        inventory[i][l] =  productionQuantities[i][l] - demands[i][l];
-                    }
+                    //System.out.println("inventorys: " + Arrays.deepToString(inventory));
                 }
-                //System.out.println("inventorys: " + Arrays.deepToString(inventory));
             }
         }
+        //System.out.println("demands (before): " + Arrays.deepToString(originalDemands));
         //System.out.println("demands: " + Arrays.deepToString(demands));
         //System.out.println("production quantities: " + Arrays.deepToString(productionQuantities));
 
         // get final results (total costs)
         // production costs, setup costs, and inventory holding costs
+        double totalCosts = 0;
+
         int totalSetupCosts = 0;
         int totalHoldingCosts = 0;
         int totalProductionCosts = 0;
+        int totalBacklogCosts = 0;
         for (int l=0; l<numberPeriods; l++){
             for (int i =0; i<numberProducts; i++){
                 if (productionQuantities[i][l] > 0){
@@ -249,6 +286,9 @@ public class MainLotsizingFixRule {
                 }
                 if (inventory[i][l] > 0){
                     totalHoldingCosts += inventory[i][l] * holdingCosts[i];
+                }
+                if (inventory[i][l] < 0){
+                    totalBacklogCosts += -inventory[i][l] * backlogCosts[i];
                 }
             }
         }
@@ -259,7 +299,7 @@ public class MainLotsizingFixRule {
             // feasibility check -> get residual capacity based on the makespan of the schedule
             residualCapacity[l] = LotSizingFunctionsFixRule.feasibilityCheck(numberMachines, numberProducts,
                     productionQuantities, processingTime, routings, capacity[l], setupTimes, l,
-                    true, false);
+                    false, false, jss);
         }
         /*
         System.out.println("total production costs: " + totalProductionCosts);
@@ -269,12 +309,50 @@ public class MainLotsizingFixRule {
         System.out.println("residual capacities: " + Arrays.toString(residualCapacityList));
          */
         long elapsedTime = System.nanoTime() - startTime;
-        System.out.println("Total execution time in sec: "
-                + elapsedTime*0.000000001);
+        //System.out.println("Total execution time in sec: "
+        //        + elapsedTime*0.000000001);
+        totalCosts = totalHoldingCosts+totalSetupCosts+totalProductionCosts+totalBacklogCosts;
+        /*
+        XSSFWorkbook workbook = new XSSFWorkbook();
+        XSSFSheet sheetProductionQuantities = workbook.createSheet("production quantities");
+        XSSFSheet sheetDemands = workbook.createSheet("demands");
+        XSSFSheet sheetInventory = workbook.createSheet("inventory");
 
-        double totalCosts = totalHoldingCosts+totalSetupCosts+totalProductionCosts;
-
+        int rowCount = 0;
+        for (int i=0; i<numberProducts; i++){
+            Row rowProductionQuantities = sheetProductionQuantities.createRow(rowCount);
+            Row rowDemands = sheetDemands.createRow(rowCount);
+            Row rowInventory = sheetInventory.createRow(rowCount);
+            rowCount++;
+            for (int l=0; l<numberPeriods; l++){
+                Cell cellProductionQuantites = rowProductionQuantities.createCell(l);
+                cellProductionQuantites.setCellValue(productionQuantities[i][l]);
+                Cell cellDemands = rowDemands.createCell(l);
+                cellDemands.setCellValue(actualDemands[i][l]);
+                Cell cellInventory = rowInventory.createCell(l);
+                cellInventory.setCellValue(inventory[i][l]);
+            }
+        }
+        try {
+            //Write the workbook in file system
+            FileOutputStream outPath = new FileOutputStream(new File("C:/Users/José Rui Figueira/IntelliJProjects/LSJSSP_under_uncertainty/fixed rules/test.xlsx"));
+            workbook.write(outPath);
+            outPath.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        System.out.println("Production quantities: " + Arrays.deepToString(productionQuantities));
+        System.out.println("Demands: " + Arrays.deepToString(actualDemands));
+        System.out.println("Inventory: " + Arrays.deepToString(inventory));
+        System.out.println("Production costs: " + totalProductionCosts);
+        System.out.println("Holding costs: " + totalHoldingCosts);
+        System.out.println("Backlog costs: " + totalBacklogCosts);
+        System.out.println("Setup costs: " + totalSetupCosts);
+        System.out.println("Total costs: " + totalCosts);
+        */
         return totalCosts;
     }
 }
+
+
 

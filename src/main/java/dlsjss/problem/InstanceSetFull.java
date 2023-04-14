@@ -91,6 +91,8 @@ public class InstanceSetFull {
                 p = new Parameter("path-instances-training");
                 String pathInstances = state.parameters.getString(p, (Parameter) null);
                 CCstate.trainingSet.instances = new Instance[size*instanceSize*scnearioSize];
+                //System.out.println("Instance size: "+instanceSize);
+                //System.out.println("Scenario size: "+scnearioSize);
                 for (int y=0; y<instanceSize; y++) {
                     p = base.push(P_PRODUCTS).push("" + y);
                     nProducts[y] = state.parameters.getInt(p, null, 0);
@@ -102,8 +104,9 @@ public class InstanceSetFull {
                         p = base.push(P_RANDOMSEED).push("" + x);
                         randomSeeds[x] = state.parameters.getInt(p, null, 0);
                         for (int z=0; z<scnearioSize; z++){
-                            CCstate.trainingSet.instances[x+(size*y)+(z)] = new Instance();
-                            CCstate.trainingSet.instances[x+(size*y)+(z)].setup(state, nProducts[y], nMachines[y], nPeriods[y], randomSeeds[x], z, pathInstances);
+                            //System.out.println("load current instance number: "+((scnearioSize*y)+(z)));
+                            CCstate.trainingSet.instances[(scnearioSize*y)+(z)] = new Instance();
+                            CCstate.trainingSet.instances[(scnearioSize*y)+(z)].setup(state, nProducts[y], nMachines[y], nPeriods[y], randomSeeds[x], z, pathInstances);
                         }
                     }
                 }
@@ -123,8 +126,8 @@ public class InstanceSetFull {
                         p = base.push(P_RANDOMSEED).push("" + x);
                         randomSeeds[x] = state.parameters.getInt(p, null, 0);
                         for (int z=0; z<scnearioSize; z++) {
-                            CCstate.validationSet.instances[x + (size * y)+(z)] = new Instance();
-                            CCstate.validationSet.instances[x + (size * y) + (z)].setup(state, nProducts[y], nMachines[y], nPeriods[y], randomSeeds[x], z, pathInstances);
+                            CCstate.validationSet.instances[(scnearioSize*y)+(z)] = new Instance();
+                            CCstate.validationSet.instances[(scnearioSize*y)+(z)].setup(state, nProducts[y], nMachines[y], nPeriods[y], randomSeeds[x], z, pathInstances);
                         }
                     }
                 }

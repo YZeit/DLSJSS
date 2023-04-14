@@ -3,6 +3,7 @@ package dlsjss.LSJSS.fixRule;
 import dlsjss.LSJSS.simElements.Job;
 
 import java.util.ArrayList;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class MachineFixRule {
     // Instance Variables
@@ -20,10 +21,9 @@ public class MachineFixRule {
         this.eventTime = 0.0;
         this.numberOperationsInSystem = 0;
         this.currentJobFinish = 0;
-
     }
 
-    public Job execute(MachineFixRule[] machines) {
+    public Job execute(MachineFixRule[] machines, int jss) {
         // Step 1: update priority / goal: find the job to be processed next
         double[] PT_list = new double[queueJob.size()];
         double PTQueue = 0.0;
@@ -55,7 +55,16 @@ public class MachineFixRule {
                     currentWINQ += machines[queueJob.get(i).operations[queueJob.get(i).nextOperation].machine].queueJob.get(k).operations[machines[queueJob.get(i).operations[queueJob.get(i).nextOperation].machine].queueJob.get(k).currentOperation].PT;
                 }
             }
-            double priority = currentPT;
+            //double priority = currentPT;
+            String[] JSS = {"SPT", "FIFO", "MTWR", "WINQ", "PT+WINQ", "R"};
+            double[] priorityList = new double[6];
+            priorityList[0] = currentPT;
+            priorityList[1] = currentRTO;
+            priorityList[2] = currentRPT;
+            priorityList[3] = currentWINQ;
+            priorityList[4] = currentPT + currentWINQ;
+            priorityList[5] = ThreadLocalRandom.current().nextInt(1, 1000);
+            double priority = priorityList[jss];
             if (priority < minPriority) {
                 nextJob = queueJob.get(i);
                 minPriority = priority;

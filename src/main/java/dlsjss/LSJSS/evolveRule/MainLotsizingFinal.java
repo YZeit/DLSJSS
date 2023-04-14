@@ -14,9 +14,6 @@ import java.util.List;
 import java.util.Random;
 
 public class MainLotsizingFinal {
-    public static int getRandomNumber(int min, int max, Random randomobj) {
-        return (int) ((randomobj.nextDouble(1) * (max - min)) + min);
-    }
 
     public static List<Integer> makeSequence(int begin, int end) {
         List<Integer> ret = new ArrayList<>(end - begin + 1);

@@ -135,7 +135,7 @@ public class LSJSS_GPHH extends GPProblemCOEV implements GroupedProblemForm {
         double averageCosts = 0.0;
         if (randTrainInstSel) {
             // random instance selection from the training set
-            int randomNum = ThreadLocalRandom.current().nextInt(0, nState.trainingSet.instances.length);
+            int randomNum = nState.randNum;
             Instance currentInstance = nState.trainingSet.instances[randomNum];
             try {
                 averageCosts = MainLotsizingFinal.run((GPIndividual) ind[0], (GPIndividual) ind[1], input, state, threadnum, stack, this,
@@ -150,7 +150,9 @@ public class LSJSS_GPHH extends GPProblemCOEV implements GroupedProblemForm {
         }
         else {
             // full set of instances
+            //System.out.println("Trainings set size: "+nState.trainingSet.instances.length);
             for (int r=0; r<nState.trainingSet.instances.length; r++) {
+                //System.out.println("current instance: "+r);
                 Instance currentInstance = nState.trainingSet.instances[r];
                 //nState.trainingSet.instances[r].print();
                 //System.out.println("instance: " + r);

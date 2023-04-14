@@ -14,6 +14,8 @@ import ec.simple.*;
 import ec.util.*;
 import dlsjss.main.LSJSS_GPHH;
 
+import java.util.concurrent.ThreadLocalRandom;
+
 /**
  * MultiPopCoevolutionaryEvaluator.java
  *
@@ -295,6 +297,8 @@ public class CooperativeCoevolutionaryEvaluator extends Evaluator
                                                  final Population population,
                                                  final GroupedProblemForm prob ) {
         int evaluations = 0;
+        CoevolutionState nState = (CoevolutionState)state;
+        nState.randNum = ThreadLocalRandom.current().nextInt(0, nState.trainingSet.instances.length);
 
         inds = new Individual[population.subpops.length];
         best_inds = new Individual[population.subpops.length];
