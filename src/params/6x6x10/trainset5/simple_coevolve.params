@@ -1,0 +1,156 @@
+# Copyright 2006 by Sean Luke and George Mason University
+# Licensed under the Academic Free License version 3.0
+# See the file "LICENSE" for more information
+
+parent.0 = ec.params
+
+#
+# The following parameter file will set up a very basic form
+# of evolution, single-threaded, no coevolution, no exchanging,
+# no cross-population breeding, using generational evolution,
+# simple fitness, popsize=1024, etc.
+# You'll need to fill in some of the gaps.
+#
+
+# ec.Evolve
+# ==============================
+
+# simple generational evolution
+#state = 				    ec.simple.SimpleEvolutionState
+state = 				    dlsjss.problem.CoevolutionState
+
+
+# ec.EvolutionState
+# ==============================
+
+# We're using the standard initialization method
+init = 					    ec.simple.SimpleInitializer
+
+# We're using the standard (empty) finalization method
+finish = 	        	    ec.simple.SimpleFinisher
+
+# We're using the standard (empty) exchange method
+exch = 					    ec.simple.SimpleExchanger
+
+# We're using standard breeding -- no cross-population breeding
+breed =					    ec.simple.SimpleBreeder
+
+# We're using multipop coevolution evaluator
+eval =					    dlsjss.problem.CooperativeCoevolutionaryEvaluator
+eval.num-elites = 0
+eval.subpop.0.num-elites = 0
+eval.subpop.1.num-elites = 0
+eval.num-shuffled = 1
+eval.num-current = 0
+eval.num-prev = 0
+eval.subpop.0.select-current = ec.select.RandomSelection
+eval.subpop.1.select-current = ec.select.RandomSelection
+eval.select-prev = ec.select.TournamentSelection
+#select.tournament.size = 2
+
+
+
+# We're using simple statistics
+stat =					    dlsjss.problem.CoevolutionStatistics
+
+# run for 51 generations, quit prematurely if I find something ideal
+generations =				200
+#there is no ideal individual, so we want to quit only after completing all generations
+quit-on-run-complete =		false
+
+
+
+# training and validation instances general settings
+# ==============================
+
+products =                  6
+machines =                  6
+periods =                   10
+
+# training and validation instances
+# ==============================
+
+trainingset = 			    dlsjss.problem.InstanceSet
+validationset =             dlsjss.problem.InstanceSet
+
+# problem instances
+trainingset.instance-size = 1
+trainingset.products-list.0 = 6
+trainingset.machines-list.0 = 6
+trainingset.periods-list.0 = 10
+
+
+validationset.instance-size = 1
+validationset.products-list.0 = 6
+validationset.machines-list.0 = 6
+validationset.periods-list.0 = 10
+
+# training set
+# ==============================
+
+# training set random seeds
+trainingset.size =			1
+trainingset.randomseed.0 = 	10
+
+trainingset.scenariosize = 5
+
+
+# validation set
+# ==============================
+
+# training set random seeds
+validationset.size =			1
+validationset.randomseed.0 = 	10
+
+validationset.scenariosize = 10
+
+
+# ec.Initializer
+# ==============================
+
+pop = 					    ec.Population
+
+
+# ec.Population
+# ==============================
+
+# No multiple populations
+pop.subpops =				2
+pop.subpop.0 = 				ec.Subpopulation
+pop.subpop.1 = 				ec.Subpopulation
+
+
+# ec.Subpopulation
+# ==============================
+
+# subpop size is 100 individuals for each subpop
+pop.subpop.0.size =			500
+pop.subpop.1.size =			500
+# don't bother trying to eliminate duplicates from the
+# initial population
+pop.subpop.0.duplicate-retries =	100
+pop.subpop.1.duplicate-retries =	100
+
+# ==You need to provide the species info for the subpopulation.==
+
+# ec.simple.SimpleBreeder
+# ==============================
+
+# By default elitism isn't done.  If you want to do elitism for, say,
+# the top 10 individuals in subpopulation 0, you'd say:
+
+# breed.elite.0 = 			1
+
+
+# ec.SimpleStatistics
+# ==============================
+# path where the statistics should be saved
+path-results =              D:/IntelliJProjects/LSJSS_GPHH/results/
+path-instances =            D:/IntelliJProjects/LSJSS_GPHH/results/
+path-instances-training =            D:/IntelliJProjects/LSJSS_GPHH/results/
+path-instances-validation =            D:/IntelliJProjects/LSJSS_GPHH/results/
+
+# output statistics to the file "out.stat" in the directory
+# the run was started in
+stat.file =				    $out.stat
+

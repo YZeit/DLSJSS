@@ -2,11 +2,11 @@ package dlsjss.main;
 
 public class main {
     public static void main(String[] args) {
-        String pathToFiles = "C:/Users/José Rui Figueira/IntelliJProjects/LSJSSP_under_uncertainty/DLSJSS/results/";
-        String pathToParams = "C:/Users/José Rui Figueira/IntelliJProjects/LSJSSP_under_uncertainty/DLSJSS/params/parameter_coevolve.params";
-        String pathToInstances = "C:/Users/José Rui Figueira/IntelliJProjects/LSJSSP_under_uncertainty/test instances/";
-        String pathToInstancesTraining = "C:/Users/José Rui Figueira/IntelliJProjects/LSJSSP_under_uncertainty/scenarios_training/";
-        String pathToInstancesValidation = "C:/Users/José Rui Figueira/IntelliJProjects/LSJSSP_under_uncertainty/scenarios/";
+        String pathToFiles = "C:/Users/DLSJSS/results/";
+        String pathToParams = "C:/Users/DLSJSS/params/parameter_coevolve.params";
+        String pathToInstances = "C:/Users/DLSJSS/test instances/";
+        String pathToInstancesTraining = "C:/Users/DLSJSS/scenarios_training/";
+        String pathToInstancesValidation = "C:/Users/DLSJSS/scenarios/";
 
         int nJobs = 10;
         int nGenerations = 200;
