@@ -4,19 +4,19 @@ public class main {
     public static void main(String[] args) {
 
         int nJobs = 1;
-        int nGenerations = 10;
-        int nPopulation = 10;
+        int nGenerations = 200;
+        int nPopulation = 500;
         int nTrainSetSize = 5;
         int nValidationSetSize = 10;
         double cv = 0.5;    // Coefficient Variant
         double ct = 0.5;    // Capacity Tightness
-        int[] nProducts = {20}; // here I can decide what type of instances I want to consider (also possible to consider different types in a single run)
-        int[] nMachines = {5};  // here I can decide what type of instances I want to consider (also possible to consider different types in a single run)
-        int[] nPeriods = {10};  // here I can decide what type of instances I want to consider (also possible to consider different types in a single run)
+        int[] nProducts = {6}; // here I can decide what type of instances I want to consider (also possible to consider different types in a single run)
+        int[] nMachines = {6};  // here I can decide what type of instances I want to consider (also possible to consider different types in a single run)
+        int[] nPeriods = {5};  // here I can decide what type of instances I want to consider (also possible to consider different types in a single run)
         boolean randTrain = false; // this is a parameter that can be chosen to randomly change the train instances after each generation (testphase, not sure if it is working)
 
         String pathToFiles = "G:/My Drive/LSJSS_uncertainty/results/GPHH/results1/";
-        String pathToParams = "G:/My Drive/LSJSS_uncertainty/params//parameter_coevolve.params";
+        String pathToParams = "G:/My Drive/LSJSS_uncertainty/params/parameter_coevolve.params";
         String pathToInstances = "G:/My Drive/LSJSS_uncertainty/test instances/";
         String pathToInstancesTraining = "G:/My Drive/LSJSS_uncertainty/scenarios_training/";
         String pathToInstancesValidation = "G:/My Drive/LSJSS_uncertainty/scenarios/";
