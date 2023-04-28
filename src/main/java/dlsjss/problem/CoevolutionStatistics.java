@@ -296,32 +296,36 @@ public class CoevolutionStatistics extends Statistics implements SteadyStateStat
                 rowCount++;
             }
             rowCount = 0;
-            Row titleRowIndividualsValidation = sheetIndividualValidation.createRow(rowCount);
+            //Row titleRowIndividualsValidation = sheetIndividualValidation.createRow(rowCount);
             Row titleRowFitnessValidation = sheetFitnessValidation.createRow(rowCount);
             rowCount++;
             for (int y=0; y<GPstate.validationSet.instances.length+1; y++){
-                Row rowIndividualValidation = sheetIndividualValidation.createRow(rowCount);
                 Row rowFitnessValidation = sheetFitnessValidation.createRow(rowCount);
                 if (y==GPstate.validationSet.instances.length){
-                    Cell cellIndividualsValidationIndex = rowIndividualValidation.createCell(0);
-                    cellIndividualsValidationIndex.setCellValue("average");
+                    //Cell cellIndividualsValidationIndex = rowIndividualValidation.createCell(0);
+                    //cellIndividualsValidationIndex.setCellValue("average");
                     Cell cellFitnessValidationIndex = rowFitnessValidation.createCell(0);
                     cellFitnessValidationIndex.setCellValue("average");
                 } else {
-                    Cell cellIndividualsValidationIndex = rowIndividualValidation.createCell(0);
-                    cellIndividualsValidationIndex.setCellValue(GPstate.validationSet.instances[y].NPRODUCTS+"x"+GPstate.validationSet.instances[y].NMACHINES+"x"+GPstate.validationSet.instances[y].NPERIODS+" RS: "+GPstate.validationSet.instances[y].RANDOMSEED);
+                    //Cell cellIndividualsValidationIndex = rowIndividualValidation.createCell(0);
+                    //cellIndividualsValidationIndex.setCellValue(GPstate.validationSet.instances[y].NPRODUCTS+"x"+GPstate.validationSet.instances[y].NMACHINES+"x"+GPstate.validationSet.instances[y].NPERIODS+" RS: "+GPstate.validationSet.instances[y].RANDOMSEED);
                     Cell cellFitnessValidationIndex = rowFitnessValidation.createCell(0);
                     cellFitnessValidationIndex.setCellValue(GPstate.validationSet.instances[y].NPRODUCTS+"x"+GPstate.validationSet.instances[y].NMACHINES+"x"+GPstate.validationSet.instances[y].NPERIODS+" RS: "+GPstate.validationSet.instances[y].RANDOMSEED);
                 }
                 for (int z = 1; z < state.numGenerations+1; z++) {
-                    Cell cellTitleIndividualsValidation = titleRowIndividualsValidation.createCell(z);
-                    cellTitleIndividualsValidation.setCellValue(z);
+
                     Cell cellTitleFitnessValidation = titleRowFitnessValidation.createCell(z);
                     cellTitleFitnessValidation.setCellValue(z);
-                    //Cell cellIndividualsValidation = rowIndividualValidation.createCell(z);
-                    //cellIndividualsValidation.setCellValue(individualsPerGenerationValidation[z-1][x][y]);
                     Cell cellFitnessValidation = rowFitnessValidation.createCell(z);
                     cellFitnessValidation.setCellValue(fitnessesPerGenerationValidation[z-1][x][y]);
+
+                    if (z==state.numGenerations) {
+                        Row rowIndividualValidation = sheetIndividualValidation.createRow(0);
+                        //Cell cellTitleIndividualsValidation = titleRowIndividualsValidation.createCell(z);
+                        //cellTitleIndividualsValidation.setCellValue(z);
+                        Cell cellIndividualsValidation = rowIndividualValidation.createCell(0);
+                        cellIndividualsValidation.setCellValue(individualsPerGenerationValidation[z - 1][x][y]);
+                    }
                 }
                 rowCount++;
             }
@@ -344,9 +348,9 @@ public class CoevolutionStatistics extends Statistics implements SteadyStateStat
 
         try {
             //Write the workbook in file system
-            FileOutputStream outIndividuals = new FileOutputStream(new File(pathResults+"run"+currentJob+"/" + "individuals.xlsx"));
-            workbookIndividuals.write(outIndividuals);
-            outIndividuals.close();
+            //FileOutputStream outIndividuals = new FileOutputStream(new File(pathResults+"run"+currentJob+"/" + "individuals.xlsx"));
+            //workbookIndividuals.write(outIndividuals);
+            //outIndividuals.close();
             FileOutputStream outFitnesses = new FileOutputStream(new File(pathResults+"run"+currentJob+"/" +"fitnesses.xlsx"));
             workbookFitnesses.write(outFitnesses);
             outFitnesses.close();

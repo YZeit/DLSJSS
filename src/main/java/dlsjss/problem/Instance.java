@@ -48,13 +48,19 @@ public class Instance {
         //this.capacityTightness = CapacityTightness;
         Parameter p = new Parameter("path-instances");
         String pathInstances = state.parameters.getString(p, (Parameter) null);
+        p = new Parameter("coefficient-variant");
+        double cv = state.parameters.getDouble(p, (Parameter) null);
+        p = new Parameter("capacity-tightness");
+        double ct = state.parameters.getDouble(p, (Parameter) null);
+        System.out.println("CV: "+cv);
+        System.out.println("CT: "+ct);
         // load input data from excel
-        String FILE_PATH = pathInstances + nProducts+"x"+nMachines+"x"+nPeriods+".xlsx";
+        String FILE_PATH = pathInstances + "ct"+ct+"/" + nProducts+"x"+nMachines+"x"+nPeriods+".xlsx";
         demands = ExcelReader.readInputDataArrayInt(FILE_PATH, "demands");
         //System.out.println("Demand: " + "scenario" + nScenario + Arrays.deepToString(demands));
         actualDemands = new int[nProducts][nPeriods];
         for (int i =0; i<nPeriods; i++){
-            String FILE_PATH_SCENARIO = path + nProducts + "x" + nMachines + "x" + nPeriods + "/cv0.2/stage_" + i + "/scenario_" + nScenario + ".xlsx";
+            String FILE_PATH_SCENARIO = path + "ct"+ct+"/"+ nProducts + "x" + nMachines + "x" + nPeriods + "/cv"+cv+"/stage_" + i + "/scenario_" + nScenario + ".xlsx";
             int[] currentDemand = ExcelReader.readInputDataListInt(FILE_PATH_SCENARIO, "demands");
             for (int j =0; j<nProducts; j++){
                 actualDemands[j][i] = currentDemand[j];

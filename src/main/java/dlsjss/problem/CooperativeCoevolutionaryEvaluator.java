@@ -485,7 +485,7 @@ public class CooperativeCoevolutionaryEvaluator extends Evaluator
                 state.population = currentPopulation;
             }
 
-        state.output.message("Evaluations: " + evaluations);
+        state.output.message("Evaluations: " + (evaluations*((CoevolutionState) state).trainingSet.instances.length));
     }
 
 

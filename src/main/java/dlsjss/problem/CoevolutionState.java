@@ -82,12 +82,12 @@ public class CoevolutionState extends EvolutionState
         } catch (InvalidFormatException e) {
             throw new RuntimeException(e);
         }
-        for (int vs=0; vs<trainingSet.size; vs++) {
-            System.out.println("Random seed: " + trainingSet.randomSeeds[vs]);
+        for (int vs=0; vs<trainingSet.instances.length; vs++) {
+            System.out.println("Training Instance: " + vs);
             trainingSet.instances[vs].print();
         }
-        for (int vs=0; vs<validationSet.size; vs++) {
-            System.out.println("Random seed: " + validationSet.randomSeeds[vs]);
+        for (int vs=0; vs<validationSet.instances.length; vs++) {
+            System.out.println("Validation Instance: " + vs);
             validationSet.instances[vs].print();
         }
 

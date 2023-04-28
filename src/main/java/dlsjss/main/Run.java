@@ -18,8 +18,10 @@ public class Run {
     public static void execute(String pathToParams, String pathToFiles, String pathToInstances,
                                String pathToInstancesTraining, String pathToInstancesValidation,
                                int numberOfJobs, int nGenerations, int nPopulation, int[] nProducts,
-                               int[] nMachines, int[] nPeriods, int nTrainSetVariety, int nValidationSetVariety,
-                               boolean randTrain, int nTrainSetSize, int nValidationSetSize) {
+                               int[] nMachines, int[] nPeriods, boolean randTrain, int nTrainSetSize,
+                               int nValidationSetSize, double cv, double ct) {
+        int nTrainSetVariety = nProducts.length;
+        int nValidationSetVariety = nProducts.length;
         String[] runConfig = new String[] {
                 Evolve.A_FILE, pathToParams,
                 "-p", ("stat.file=$"+pathToFiles+"out.stat"),
@@ -39,6 +41,8 @@ public class Run {
                 "-p", ("random-training-instance-selection="+randTrain),
                 "-p", ("trainingset.scenariosize="+nTrainSetSize),
                 "-p", ("validationset.scenariosize="+nValidationSetSize),
+                "-p", ("coefficient-variant="+cv),
+                "-p", ("capacity-tightness="+ct),
         };
         String[] trainSetConfig = new String[nTrainSetVariety*2*6];
         for (int i=0; i<nTrainSetVariety; i++) {
@@ -56,6 +60,7 @@ public class Run {
             trainSetConfig[i*2*6+11] = ("validationset.periods-list." + i + "=" + nPeriods[i]);
         }
         String[] runConfigFinal = concatWithStream(runConfig, trainSetConfig);
+        System.out.println(Arrays.toString(runConfigFinal));
         Evolve.main(runConfigFinal);
     }
 }
