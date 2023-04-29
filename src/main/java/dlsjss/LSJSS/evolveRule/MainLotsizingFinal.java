@@ -265,6 +265,7 @@ public class MainLotsizingFinal {
         //System.out.println("demands (before): " + Arrays.deepToString(originalDemands));
         //System.out.println("demands: " + Arrays.deepToString(demands));
         //System.out.println("production quantities: " + Arrays.deepToString(productionQuantities));
+        //System.out.println("inventory: " + Arrays.deepToString(inventory));
 
         // get final results (total costs)
         // production costs, setup costs, and inventory holding costs
@@ -297,17 +298,20 @@ public class MainLotsizingFinal {
                     productionQuantities, processingTime, routings, capacity[l], setupTimes, l,
                     JSSRule, input, state, threadnum, stack, problem,false, false);
         }
-        /*
-        System.out.println("total production costs: " + totalProductionCosts);
-        System.out.println("total setup costs: " + totalSetupCosts);
-        System.out.println("total holding costs: " + totalHoldingCosts);
-        System.out.println("sum of all costs: " + (totalHoldingCosts+totalSetupCosts+totalProductionCosts));
-        System.out.println("residual capacities: " + Arrays.toString(residualCapacityList));
-         */
+
+        //System.out.println("total production costs: " + totalProductionCosts);
+        //System.out.println("total setup costs: " + totalSetupCosts);
+        //System.out.println("total holding costs: " + totalHoldingCosts);
+        //System.out.println("total backlog costs: " + totalBacklogCosts);
+        //System.out.println("sum of all costs: " + (totalHoldingCosts+totalSetupCosts+totalProductionCosts+totalBacklogCosts));
+        //System.out.println("residual capacities: " + Arrays.toString(residualCapacity));
+
         long elapsedTime = System.nanoTime() - startTime;
         //System.out.println("Total execution time in sec: "
         //        + elapsedTime*0.000000001);
         totalCosts = totalHoldingCosts+totalSetupCosts+totalProductionCosts+totalBacklogCosts;
+
+        //System.out.println("total costs: " + totalCosts);
 
         return totalCosts;
     }

@@ -473,8 +473,9 @@ public class LotSizingFunctionsFinal {
                 //System.out.println("Assignment of product " + x + " not feasible");
                 productionQuantities[productToAssign][currentPeriod] -= productsToCheck[productToAssign];
             } else {productsToCheck[productToAssign] = 0;} //System.out.println("Assignment of product " + x + " feasible");
-                //System.out.println("production quantities: " + Arrays.deepToString(productionQuantities));}
+
         }
+        //System.out.println("production quantities: " + Arrays.deepToString(productionQuantities));
         // all remaining quantities in productsToCheck array must be backwarded
         //System.out.println("remaining production quantities (excess): " + Arrays.toString(productsToCheck));
         // first check to include the remaining quantitied in already existing lots in order to avoid additional setup costs
@@ -516,11 +517,11 @@ public class LotSizingFunctionsFinal {
                             // If lot assignment feasible, assign lot and check next lot, otherwise discard and check next lot
                             if (residualCapacity[currentPeriod] < 0) {
                                 //System.out.println("Assignment of product " + x + " not feasible");
-                                productionQuantities[productToAssign][currentPeriod] -= productsToCheck[productToAssign];
+                                productionQuantities[productToAssign][l] -= productsToCheck[productToAssign];
                             } else {
                                 productsToCheck[productToAssign] = 0;
                             } //System.out.println("Assignment of product " + productToAssign + " feasible");
-                            //System.out.println("production quantities: " + Arrays.deepToString(productionQuantities));}
+                            //System.out.println("production quantities: " + Arrays.deepToString(productionQuantities));
                         }
                     }
                     if (l == 0) {
@@ -566,11 +567,11 @@ public class LotSizingFunctionsFinal {
                             // If lot assignment feasible, assign lot and check next lot, otherwise discard and check next lot
                             if (residualCapacity[currentPeriod] < 0) {
                                 //System.out.println("Assignment of product " + x + " not feasible");
-                                productionQuantities[productToAssign][currentPeriod] -= productsToCheck[productToAssign];
+                                productionQuantities[productToAssign][l] -= productsToCheck[productToAssign];
                             } else {
                                 productsToCheck[productToAssign] = 0;
                             } //System.out.println("Assignment of product " + productToAssign + " feasible");
-                            //System.out.println("production quantities: " + Arrays.deepToString(productionQuantities));}
+                            //System.out.println("production quantities: " + Arrays.deepToString(productionQuantities));
                         }
                     }
                 }
