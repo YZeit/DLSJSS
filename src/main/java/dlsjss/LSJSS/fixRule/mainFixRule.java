@@ -36,9 +36,10 @@ public class mainFixRule {
     }
 
     public static void main(String[] args) throws IOException, InvalidFormatException {
-        int nScenariosTraining = 10;
-        int nScenariosValidation = 10;
+        int nScenariosTraining = 5;
+        int nScenariosValidation = 30;
         double cv = 0.2;
+        double ct = 0.5;
         int[] PRODUCTS = {6, 6, 6, 10, 10, 10, 20, 20, 20};
         int[] MACHINES = {6, 6, 6, 10, 10, 10, 5, 5, 5};
         int[] PERIODS = {5, 10, 20, 5, 10, 20, 5, 10, 20};
@@ -46,7 +47,7 @@ public class mainFixRule {
         String[] JSS = {"SPT", "FIFO", "MTWR", "WINQ", "PT+WINQ", "R"};
         String pathScenariosTraining = "G:/My Drive/LSJSS_uncertainty/scenarios_training/";
         String pathScenariosValidation = "G:/My Drive/LSJSS_uncertainty/scenarios/";
-        String pathInstances = "G:/My Drive/LSJSS_uncertainty/test instances/";
+        String pathInstances = "G:/My Drive/LSJSS_uncertainty/test instances/ct"+ct+"/";
         // workbook absolut mean
         XSSFWorkbook workbook = new XSSFWorkbook();
         XSSFSheet sheetTraining = workbook.createSheet("training");
@@ -126,6 +127,7 @@ public class mainFixRule {
                 cellTestingIndexExecutionTime.setCellValue(JSS[j] + " / " + LSS[l]);
 
                 for (int i = 0; i < PRODUCTS.length; i++) {
+                    System.out.println("instance " + PRODUCTS[i] + "x" + MACHINES[i] + "x" + PERIODS[i]);
                     //training
                     // mean
                     Cell cellTitleTraining = titleRowTraining.createCell(i+1);
@@ -151,7 +153,8 @@ public class mainFixRule {
                     double[] trainingList = new double[nScenariosTraining];
                     String pathToCurrentScenario = pathScenariosTraining + PRODUCTS[i]+"X"+MACHINES[i]+"x"+PERIODS[i]+"/cv"+cv+"/";
                     for (int s = 0; s < nScenariosTraining; s++) {
-                        currentInstance.setup(PRODUCTS[i], MACHINES[i], PERIODS[i], 10, s, pathToCurrentScenario, pathInstances);
+                        System.out.println("training scenario " + s);
+                        currentInstance.setup(PRODUCTS[i], MACHINES[i], PERIODS[i], s, pathToCurrentScenario, pathInstances);
                         long startTime = System.nanoTime();
                         double result = MainLotsizingFixRule.run(currentInstance, j, l);
                         long elapsedTime = System.nanoTime() - startTime;
@@ -211,7 +214,8 @@ public class mainFixRule {
                     double[] testingList = new double[nScenariosValidation];
                     String pathToCurrentScenarioValidation = pathScenariosValidation + PRODUCTS[i]+"X"+MACHINES[i]+"x"+PERIODS[i]+"/cv"+cv+"/";
                     for (int s = 0; s < nScenariosValidation; s++) {
-                        currentInstance.setup(PRODUCTS[i], MACHINES[i], PERIODS[i], 10, s, pathToCurrentScenarioValidation, pathInstances);
+                        System.out.println("validation scenario " + s);
+                        currentInstance.setup(PRODUCTS[i], MACHINES[i], PERIODS[i], s, pathToCurrentScenarioValidation, pathInstances);
                         long startTime = System.nanoTime();
                         double result = MainLotsizingFixRule.run(currentInstance, j, l);
                         long elapsedTime = System.nanoTime() - startTime;
@@ -253,23 +257,23 @@ public class mainFixRule {
         try {
             //Write the workbook in file system
             // mean
-            FileOutputStream outPath = new FileOutputStream(new File("G:/My Drive/LSJSS_uncertainty/fixed rules/cv"+cv+"/results.xlsx"));
+            FileOutputStream outPath = new FileOutputStream("G:/My Drive/LSJSS_uncertainty/fixed rules/ct"+ct+"/cv"+cv+"/results.xlsx");
             workbook.write(outPath);
             outPath.close();
             // std
-            FileOutputStream outPathStd = new FileOutputStream(new File("G:/My Drive/LSJSS_uncertainty/fixed rules/cv"+cv+"/results_std.xlsx"));
+            FileOutputStream outPathStd = new FileOutputStream("G:/My Drive/LSJSS_uncertainty/fixed rules/ct"+ct+"/cv"+cv+"/results_std.xlsx");
             workbookStd.write(outPathStd);
             outPathStd.close();
             // min
-            FileOutputStream outPathMin = new FileOutputStream(new File("G:/My Drive/LSJSS_uncertainty/fixed rules/cv"+cv+"/results_min.xlsx"));
+            FileOutputStream outPathMin = new FileOutputStream("G:/My Drive/LSJSS_uncertainty/fixed rules/ct"+ct+"/cv"+cv+"/results_min.xlsx");
             workbookMin.write(outPathMin);
             outPathMin.close();
             // max
-            FileOutputStream outPathMax = new FileOutputStream(new File("G:/My Drive/LSJSS_uncertainty/fixed rules/cv"+cv+"/results_max.xlsx"));
+            FileOutputStream outPathMax = new FileOutputStream("G:/My Drive/LSJSS_uncertainty/fixed rules/ct"+ct+"/cv"+cv+"/results_max.xlsx");
             workbookMax.write(outPathMax);
             outPathMax.close();
             // execution time
-            FileOutputStream outPathExecutionTime = new FileOutputStream(new File("G:/My Drive/LSJSS_uncertainty/fixed rules/cv"+cv+"/results_execution_time.xlsx"));
+            FileOutputStream outPathExecutionTime = new FileOutputStream("G:/My Drive/LSJSS_uncertainty/fixed rules/ct"+ct+"/cv"+cv+"/results_execution_time.xlsx");
             workbookExecutionTime.write(outPathExecutionTime);
             outPathExecutionTime.close();
         } catch (Exception e) {

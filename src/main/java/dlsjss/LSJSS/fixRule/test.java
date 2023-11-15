@@ -50,7 +50,7 @@ public class test {
 
         String pathToCurrentScenario = pathScenariosValidation + 6+"X"+6+"x"+20+"/cv0.2/";
         InstanceFixRule currentInstance = new InstanceFixRule();
-        currentInstance.setup(6, 6, 20, 10, 0, pathToCurrentScenario, pathInstances);
+        currentInstance.setup(6, 6, 20, 0, pathToCurrentScenario, pathInstances);
         double result = MainLotsizingFixRule.run(currentInstance, 0, 1);
         System.out.println(result);
 

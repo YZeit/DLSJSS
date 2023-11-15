@@ -13,6 +13,25 @@ import java.util.Iterator;
 
 public class ExcelReader {
 
+    public static String readStringValue(String SAMPLE_XLSX_FILE_PATH, String SHEET_NAME) throws IOException, InvalidFormatException {
+
+        File file = new File(SAMPLE_XLSX_FILE_PATH);
+        FileInputStream fis = new FileInputStream(file);
+        XSSFWorkbook workbook = new XSSFWorkbook(fis);
+
+        Sheet sheet = workbook.getSheet(SHEET_NAME);
+
+        Row row = sheet.getRow(0);  // Assuming the string value is in the first row (0-based index)
+        Cell cell = row.getCell(0);  // Assuming the string value is in the first column (0-based index)
+
+        String cellValue = cell.getStringCellValue();
+
+        workbook.close();
+        fis.close();
+
+        return cellValue;
+    }
+
     public static int[][] readInputDataArrayInt(String SAMPLE_XLSX_FILE_PATH, String SHEET_NAME) throws IOException, InvalidFormatException {
 
         // Creating a Workbook from an Excel file (.xls or .xlsx)

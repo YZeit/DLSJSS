@@ -39,12 +39,11 @@ public class InstanceFixRule {
         { throw new InternalError(); } // never happens
     }
 
-    public void setup(int nProducts, int nMachines, int nPeriods, int RandomSeed, int nScenario,
+    public void setup(int nProducts, int nMachines, int nPeriods, int nScenario,
                       String path, String pathInstances) throws IOException, InvalidFormatException {
         NPRODUCTS = nProducts;
         NMACHINES = nMachines;
         NPERIODS = nPeriods;
-        RANDOMSEED = RandomSeed;
         NSCENARIO = nScenario;
         // load input data from excel
         String FILE_PATH = pathInstances + nProducts+"x"+nMachines+"x"+nPeriods+".xlsx";

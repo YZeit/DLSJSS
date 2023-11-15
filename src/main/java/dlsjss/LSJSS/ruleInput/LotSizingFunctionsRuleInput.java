@@ -1,33 +1,40 @@
-package dlsjss.LSJSS.evolveRule;
+package dlsjss.LSJSS.ruleInput;
 
-import dlsjss.LSJSS.fixRule.LotSizingFunctionsFixRule;
 import dlsjss.LSJSS.simElements.Job;
-import dlsjss.LSJSS.simElements.Machine;
 import dlsjss.LSJSS.simElements.Operation;
+import dlsjss.main.DoubleData;
 import ec.EvolutionState;
 import ec.gp.ADFStack;
 import ec.gp.GPIndividual;
-import dlsjss.main.DoubleData;
-import dlsjss.main.LSJSS_GPHH;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import dlsjss.problem.Instance;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import dlsjss.util.ExpressionEvaluator;
 
-public class LotSizingFunctionsFinal {
+public class LotSizingFunctionsRuleInput {
 
     private static double calculateAverage(List<Integer> marks) {
         return marks.stream()
                 .mapToDouble(d -> d)
                 .average()
                 .orElse(0.0);
+    }
+
+    public static double protectedDiv(double numerator, double denominator) {
+        double result = 0;
+        if (denominator == 0){
+            result = 1;
+        } else {
+            result = numerator/denominator;
+        }
+        return result;
     }
 
     public static double getMaxNumber(double[][] array) {
@@ -63,16 +70,12 @@ public class LotSizingFunctionsFinal {
                 productionQuantities[i][currentPeriod] = Math.max(demands[i][currentPeriod] - inventory[i][currentPeriod-1],0);
             }
         }
-
-
         return productionQuantities;
     }
 
     public static double feasibilityCheck(int numberMachines, int numberProducts, int[][] productionQuantities,
                                           double[][] processingTime, int[][]routings, double currentCapacity,
-                                          int[] setupTimes, int currentPeriod, GPIndividual IndividualToEvaluate,
-                                          DoubleData input, EvolutionState state, int threadnum, ADFStack stack,
-                                          ec.Problem problem, boolean printExcel, boolean verbose) {
+                                          int[] setupTimes, int currentPeriod, boolean printExcel, boolean verbose, String jss) {
         // processing time per product per machine
 
         if (verbose) {
@@ -97,9 +100,9 @@ public class LotSizingFunctionsFinal {
         int TRNO = 0;
 
         // initialize the machines
-        Machine[] machines = new Machine[numberMachines]; // here I store all Job Elements
+        MachineRuleInput[] machines = new MachineRuleInput[numberMachines]; // here I store all Job Elements
         for (int i =0; i<numberMachines; i++){
-            machines[i] = new Machine();
+            machines[i] = new MachineRuleInput();
         }
 
         // Release jobs
@@ -146,8 +149,7 @@ public class LotSizingFunctionsFinal {
             // Step 3: check if there are jobs waiting to be processed on the machines
             for (int i = 0; i < numberMachines; i++) {
                 if (machines[i].clock <= globalGlock && machines[i].queueJob.size() > 0){
-                    Job executedJob = machines[i].execute(machines, IndividualToEvaluate, input, state, threadnum,
-                            stack, problem);
+                    Job executedJob = machines[i].execute(machines, jss);
                     TRNO -= 1;
                     SPT -= machines[i].eventTime;
                     if (verbose) {
@@ -292,12 +294,11 @@ public class LotSizingFunctionsFinal {
     public static int[][] increaseLotsize(int numberMachines, int numberProducts, int[][] productionQuantities,
                                           double[][] processingTime, int[][]routings, double[] capacity, double[] residualCapacity,
                                           int currentPeriod, int numberPeriods, int[][] demands, int[] setupCosts,
-                                          int[] holdingCosts, int[][] inventory, int[] setupTimes, int[] backlogCosts,
-                                          GPIndividual JSSRule, GPIndividual LSSRule, DoubleData input, EvolutionState state,
-                                          int threadnum, ADFStack stack, ec.Problem problem){
+                                          int[] holdingCosts, int[][] inventory, int[] setupTimes,
+                                          int[] backlogCosts, String lss, String jss){
         double[][] CSI = new double[numberProducts][numberPeriods];
         for (int l=currentPeriod+1; l<numberPeriods; l++){
-            for (int i=0; i<numberProducts; i++){
+            for (int i=0; i<numberProducts; i++) {
                 int x = productionQuantities[i][currentPeriod];
                 int previousInventory = 0;
                 if (x > 0) {
@@ -315,65 +316,93 @@ public class LotSizingFunctionsFinal {
                     // calculate CSI
                     // Example: Dixon-Silver
                     // calculate binary setup variable gamma
-                    ((LSJSS_GPHH)problem).currentBSV = 0;
-                    if (productionQuantities[i][currentPeriod] > 0){((LSJSS_GPHH)problem).currentBSV = 1;}
-                    ((LSJSS_GPHH)problem).currentSC = setupCosts[i];
-                    ((LSJSS_GPHH)problem).currentCF = residualCapacity[currentPeriod];
-                    ((LSJSS_GPHH)problem).currentNPRC = coveragePeriod;
-                    ((LSJSS_GPHH)problem).currentAHC = (demands[i][l] * holdingCosts[i]) * (l-currentPeriod);
-                    ((LSJSS_GPHH)problem).currentCP = currentPeriod;
-                    ((LSJSS_GPHH)problem).currentHCC = (productionQuantities[i][currentPeriod] - demands[i][currentPeriod]) * holdingCosts[i];
-                    ((LSJSS_GPHH)problem).currentNPRE = coveragePeriod+1;
-                    ((LSJSS_GPHH)problem).currentADSHC = (((LSJSS_GPHH)problem).currentBSV*setupCosts[i] - ((LSJSS_GPHH)problem).currentHCC);
-                    ((LSJSS_GPHH)problem).currentADSHCE = (setupCosts[i] - ((LSJSS_GPHH)problem).currentHCC - ((LSJSS_GPHH)problem).currentAHC);
-                    double PDR = 0;
-                    for(int m=currentPeriod+1; m<numberPeriods; m++){
-                        PDR += demands[i][m];}
-                    double APDR = PDR/(numberPeriods-currentPeriod);
-                    ((LSJSS_GPHH)problem).currentAPDR = APDR;
-                    double CU = 0;
-                    for(int m=0; m<numberMachines; m++){
-                        CU += processingTime[i][m];}
-                    ((LSJSS_GPHH)problem).currentCU = CU;
-                    ((LSJSS_GPHH)problem).currentNI = numberProducts;
-                    ((LSJSS_GPHH)problem).currentLPH = numberPeriods;
-                    ((LSJSS_GPHH)problem).currentHC = holdingCosts[i];
-                    double PD = 0;
-                    for(int m=0; m<numberPeriods; m++){
-                        PD += demands[i][m];}
-                    double APD = PD/numberPeriods;
-                    ((LSJSS_GPHH)problem).currentAPD = APD;
-                    double PDK = 0;
-                    for(int m=0; m<numberPeriods; m++){
-                        for(int n=0; n<numberProducts; n++){
-                            PDK += demands[n][m];}
+                    double currentBSV = 0;
+                    if (productionQuantities[i][currentPeriod] > 0) {
+                        currentBSV = 1;
+                    } else {
+                        currentBSV = 0;
                     }
-                    double APDK = PDK/(numberPeriods*numberProducts);
-                    ((LSJSS_GPHH)problem).currentAPDK = APDK;
-                    ((LSJSS_GPHH)problem).currentSHC = ((LSJSS_GPHH)problem).currentSC/((LSJSS_GPHH)problem).currentHC;
-                    ((LSJSS_GPHH)problem).currentSHCN = ((LSJSS_GPHH)problem).currentSHC/((LSJSS_GPHH)problem).currentAPD;
-                    ((LSJSS_GPHH)problem).currentC = capacity[currentPeriod];
-                    ((LSJSS_GPHH)problem).currentPLE = demands[i][l];
-                    double PDAI = 0;
-                    for(int m=currentPeriod+1; m<numberPeriods; m++){
-                        for(int n=0; n<numberProducts; n++){
-                            PDAI += demands[n][m];}
-                    }
-                    double APDAI = PDAI/((numberPeriods-currentPeriod)*numberProducts);
-                    //((LSJSS_GPHH)problem).currentAPDAI = APDAI;
-                    double RCC = 0;
-                    for(int m=currentPeriod+1; m<numberPeriods; m++){
-                        RCC += residualCapacity[m];}
-                    ((LSJSS_GPHH)problem).currentRCC = RCC;
-                    ((LSJSS_GPHH)problem).currentCLS = productionQuantities[i][currentPeriod];
-                    ((LSJSS_GPHH)problem).currentTBO = Math.sqrt((2*((LSJSS_GPHH)problem).currentSC)/(((LSJSS_GPHH)problem).currentHC*
-                            ((LSJSS_GPHH)problem).currentAPD));
-                    ((LSJSS_GPHH)problem).currentBC = backlogCosts[i];
+                    double currentSC = setupCosts[i];
+                    double currentCF = residualCapacity[currentPeriod];
+                    double currentNPRC = coveragePeriod;
 
-                    LSSRule.trees[0].child.eval(state,threadnum,input,stack,LSSRule,problem);  // calculate priority; here is where the GP must evolve new scheduling rules
-                    double priority = input.x;
-                    CSI[i][l] = priority;
-                    //CSI[i][l] = (gamma*setupCosts[i] - holdingCostCurrentLot - holdingCostLotExtension) / (coveragePeriod^2 + demands[i][currentPeriod+coveragePeriod]);
+                    double currentAHC = (demands[i][l] * holdingCosts[i]) * (l - currentPeriod);
+                    double currentCP = currentPeriod;
+                    double currentHCC = (productionQuantities[i][currentPeriod] - demands[i][currentPeriod]) * holdingCosts[i];
+                    double currentNPRE = coveragePeriod + 1;
+                    double currentADSHC = (currentBSV * setupCosts[i] - currentHCC);
+                    double currentADSHCE = (setupCosts[i] - currentHCC - currentAHC);
+                    double PDR = 0;
+                    for (int m = currentPeriod + 1; m < numberPeriods; m++) {
+                        PDR += demands[i][m];
+                    }
+                    double APDR = PDR / (numberPeriods - currentPeriod);
+                    double currentAPDR = APDR;
+                    double CU = 0;
+                    for (int m = 0; m < numberMachines; m++) {
+                        CU += processingTime[i][m];
+                    }
+                    double currentCU = CU;
+                    double currentNI = numberProducts;
+                    double currentLPH = numberPeriods;
+                    double currentHC = holdingCosts[i];
+                    double PD = 0;
+                    for (int m = 0; m < numberPeriods; m++) {
+                        PD += demands[i][m];
+                    }
+                    double APD = PD / numberPeriods;
+                    double currentAPD = APD;
+                    double PDK = 0;
+                    for (int m = 0; m < numberPeriods; m++) {
+                        for (int n = 0; n < numberProducts; n++) {
+                            PDK += demands[n][m];
+                        }
+                    }
+                    double APDK = PDK / (numberPeriods * numberProducts);
+                    double currentAPDK = APDK;
+                    double currentSHC = currentSC / currentHC;
+                    double currentSHCN = currentSHC / currentAPD;
+                    double currentC = capacity[currentPeriod];
+                    double currentPLE = demands[i][l];
+                    double PDAI = 0;
+                    for (int m = currentPeriod + 1; m < numberPeriods; m++) {
+                        for (int n = 0; n < numberProducts; n++) {
+                            PDAI += demands[n][m];
+                        }
+                    }
+                    double APDAI = PDAI / ((numberPeriods - currentPeriod) * numberProducts);
+                    double currentAPDAI = APDAI;
+                    double RCC = 0;
+                    for (int m = currentPeriod + 1; m < numberPeriods; m++) {
+                        RCC += residualCapacity[m];
+                    }
+                    double currentRCC = RCC;
+                    double currentCLS = productionQuantities[i][currentPeriod];
+                    double currentTBO = Math.sqrt((2 * currentSC) / (currentHC * currentAPD));
+
+                    double eisenhut = (currentBSV * currentSC - currentHCC - currentAHC) / (Math.pow(currentNPRC, 2) * currentPLE);
+                    double dixonSilver = (protectedDiv((currentBSV * currentSC + currentHCC), currentNPRC) -
+                            (protectedDiv((currentSC + currentHCC + currentAHC), currentNPRE))) / (currentCU * currentPLE);
+                    double groff = ((2 * currentBSV * currentSC) / (currentHC)) - (currentPLE * currentNPRC * currentNPRE); //check
+                    double silverMeal = (protectedDiv((currentBSV * currentSC + currentHCC), currentNPRC)) -
+                            ((currentSC + currentHCC + currentAHC) / currentNPRE);
+                    double leastUnitCost = (protectedDiv((currentBSV * currentSC + currentHCC), currentCLS)) -
+                            ((currentSC + currentHCC + currentAHC) / (currentCLS + currentPLE));
+                    double leastTotalCost = currentADSHC - currentADSHCE;
+                    double absoluteCost = currentBSV * currentSC - currentAHC;
+                    double timeBetweenOrders = currentTBO;
+                    double setupOverHoldingCost = currentSC / currentHC;
+                    double correctedSetupOverHoldingCost = currentSC / currentHC * currentCU * currentAPD;
+                    double expectedAverageCost = (currentSC / currentTBO) + ((currentHC * currentAPD * currentTBO) / 2);
+                    double expectedCostSavings = ((currentTBO - 1) * currentSC) - ((currentTBO * (currentTBO - 1) * currentHC * currentAPD) / 2);
+                    double correctedExpectedSavings = ((currentTBO - 1) * currentSC) - ((currentTBO * (currentTBO - 1) * currentHC * currentAPD) / (2 * currentCU * currentAPD));
+
+                    double currentBC = 0.0;
+
+                    CSI[i][l] = ExpressionEvaluator.executeLSR(currentAHC, currentBSV, currentSC, currentCF,
+                            currentNPRC, currentHCC, currentNPRE, currentCU, currentADSHC, currentAPDR, currentNI, currentLPH,
+                            currentCP, currentHC, currentAPD, currentAPDK, currentTBO, currentSHC, currentSHCN, currentC, currentCLS,
+                            currentPLE, currentRCC, currentADSHCE, currentBC, lss);
                 }
             }
         }
@@ -392,14 +421,12 @@ public class LotSizingFunctionsFinal {
             }
             //System.out.println("csi: " + Arrays.deepToString(CSI));
             //System.out.println("max csi: " + maxCSI);
-            //System.out.println("item to extend: " + productToExtend);
-            //System.out.println("period to extend: " + periodToExtend);
 
             // Update the production quantity by extending the max CSI demand
             productionQuantities[productToExtend][currentPeriod] += demands[productToExtend][periodToExtend];
-            residualCapacity[currentPeriod] = LotSizingFunctionsFinal.feasibilityCheck(numberMachines, numberProducts,
+            residualCapacity[currentPeriod] = LotSizingFunctionsRuleInput.feasibilityCheck(numberMachines, numberProducts,
                     productionQuantities, processingTime, routings, capacity[currentPeriod], setupTimes, currentPeriod,
-                    JSSRule, input, state, threadnum, stack, problem, false, false);
+                    false, false, jss);
             //System.out.println("production quantities: " + Arrays.deepToString(productionQuantities));
             //System.out.println("residual capacity: " + residualCapacity);
             // If lot extension feasible, extend lot and check next lot, otherwise discard and check next lot
@@ -407,7 +434,7 @@ public class LotSizingFunctionsFinal {
                 //System.out.println("lot extension not feasible");
                 productionQuantities[productToExtend][currentPeriod] -= demands[productToExtend][periodToExtend];
             } else {
-                //System.out.println("lot extension feasible");
+                System.out.println("lot extension feasible");
             }
             // discard the tested lot extension for further tests
             CSI[productToExtend][periodToExtend] = 0.0;
@@ -417,17 +444,11 @@ public class LotSizingFunctionsFinal {
         return productionQuantities;
     }
 
-
-
-
-
     public static int[][] backtrackMechanism(int numberMachines, int numberProducts, int[][] productionQuantities,
                                              double[][] processingTime, int[][]routings, double currentCapacity,
                                              double[] residualCapacity,
                                              int currentPeriod, int numberPeriods, int[][] demands, int[] setupCosts,
-                                             int[] holdingCosts, int[][] inventory, int[] setupTimes,
-                                             GPIndividual IndividualToEvaluate, DoubleData input, EvolutionState state,
-                                             int threadnum, ADFStack stack, ec.Problem problem, Instance currentInstance){
+                                             int[] holdingCosts, int[][] inventory, int[] setupTimes, String jss){
         //System.out.println("Backtrack mechanism activated");
         //currentInstance.print();
 
@@ -462,23 +483,19 @@ public class LotSizingFunctionsFinal {
                     }
                 }
             }
-            if (productToAssign != 999){ // means that there is no product with net demand to assign
-
-            }
             // assign quantities of the selected product
             productionQuantities[productToAssign][currentPeriod] = productsToCheck[productToAssign];
             // feasibility check
-            residualCapacity[currentPeriod] = LotSizingFunctionsFinal.feasibilityCheck(numberMachines, numberProducts,
+            residualCapacity[currentPeriod] = LotSizingFunctionsRuleInput.feasibilityCheck(numberMachines, numberProducts,
                     productionQuantities, processingTime, routings, currentCapacity, setupTimes, currentPeriod,
-                    IndividualToEvaluate, input, state, threadnum, stack, problem,false, false);
+                    false, false, jss);
             // If lot assignment feasible, assign lot and check next lot, otherwise discard and check next lot
             if (residualCapacity[currentPeriod]<0){
                 //System.out.println("Assignment of product " + x + " not feasible");
                 productionQuantities[productToAssign][currentPeriod] -= productsToCheck[productToAssign];
             } else {productsToCheck[productToAssign] = 0;} //System.out.println("Assignment of product " + x + " feasible");
-
+            //System.out.println("production quantities: " + Arrays.deepToString(productionQuantities));}
         }
-        //System.out.println("production quantities: " + Arrays.deepToString(productionQuantities));
         // all remaining quantities in productsToCheck array must be backwarded
         //System.out.println("remaining production quantities (excess): " + Arrays.toString(productsToCheck));
         // first check to include the remaining quantitied in already existing lots in order to avoid additional setup costs
@@ -514,17 +531,17 @@ public class LotSizingFunctionsFinal {
                             productionQuantities[productToAssign][l] += productsToCheck[productToAssign];
                             //System.out.println("production quantities: " + Arrays.deepToString(productionQuantities));
                             // feasibility check
-                            residualCapacity[currentPeriod] = LotSizingFunctionsFinal.feasibilityCheck(numberMachines, numberProducts,
+                            residualCapacity[currentPeriod] = LotSizingFunctionsRuleInput.feasibilityCheck(numberMachines, numberProducts,
                                     productionQuantities, processingTime, routings, currentCapacity, setupTimes, l,
-                                    IndividualToEvaluate, input, state, threadnum, stack, problem, false, false);
+                                    false, false, jss);
                             // If lot assignment feasible, assign lot and check next lot, otherwise discard and check next lot
                             if (residualCapacity[currentPeriod] < 0) {
                                 //System.out.println("Assignment of product " + x + " not feasible");
-                                productionQuantities[productToAssign][l] -= productsToCheck[productToAssign];
+                                productionQuantities[productToAssign][currentPeriod] -= productsToCheck[productToAssign];
                             } else {
                                 productsToCheck[productToAssign] = 0;
                             } //System.out.println("Assignment of product " + productToAssign + " feasible");
-                            //System.out.println("production quantities: " + Arrays.deepToString(productionQuantities));
+                            //System.out.println("production quantities: " + Arrays.deepToString(productionQuantities));}
                         }
                     }
                     if (l == 0) {
@@ -552,38 +569,29 @@ public class LotSizingFunctionsFinal {
                         }
                     }
                 }
-                // here I must implement a mechanism to break the loop when the product to assign is 999;
-                // in that case just return a very large costs in order to evaluate the individual very bad
-                if (productToAssign == 999) {
-                    System.out.println("Backtrack failed");
-                    productionQuantities[0][0] = 999; // assign 999 to the first entry of the productionQuantities
-                    // this value will be later checked and if it is 999 means the solution is infeasible
-                    // the costs will then be changed to be a large number in order to mark the current ind as bad
-                } else {
-                    //System.out.println("products to assign: " + productToAssign);
-                    //System.out.println("current period: " + currentPeriod);
-                    for (int l = currentPeriod - 1; l >= 0; l--) {
-                        //System.out.println("Period to check: " + l);
-                        if (productionQuantities[productToAssign][l] == 0) {
-                            //System.out.println("Lot does not exist");
-                            if (residualCapacity[l] > 0) {
-                                //System.out.println("Residual capacity available");
-                                // add the remaining production quantities to the the existing lot
-                                productionQuantities[productToAssign][l] += productsToCheck[productToAssign];
-                                //System.out.println("production quantities: " + Arrays.deepToString(productionQuantities));
-                                // feasibility check
-                                residualCapacity[currentPeriod] = LotSizingFunctionsFinal.feasibilityCheck(numberMachines, numberProducts,
-                                        productionQuantities, processingTime, routings, currentCapacity, setupTimes, l,
-                                        IndividualToEvaluate, input, state, threadnum, stack, problem, false, false);
-                                // If lot assignment feasible, assign lot and check next lot, otherwise discard and check next lot
-                                if (residualCapacity[currentPeriod] < 0) {
-                                    //System.out.println("Assignment of product " + x + " not feasible");
-                                    productionQuantities[productToAssign][l] -= productsToCheck[productToAssign];
-                                } else {
-                                    productsToCheck[productToAssign] = 0;
-                                } //System.out.println("Assignment of product " + productToAssign + " feasible");
-                                //System.out.println("production quantities: " + Arrays.deepToString(productionQuantities));
-                            }
+                //System.out.println("products to assign: " + productToAssign);
+                //System.out.println("current period: " + currentPeriod);
+                for (int l = currentPeriod - 1; l >= 0; l--) {
+                    //System.out.println("Period to check: " + l);
+                    if (productionQuantities[productToAssign][l] == 0) {
+                        //System.out.println("Lot does not exist");
+                        if (residualCapacity[l] > 0) {
+                            //System.out.println("Residual capacity available");
+                            // add the remaining production quantities to the the existing lot
+                            productionQuantities[productToAssign][l] += productsToCheck[productToAssign];
+                            //System.out.println("production quantities: " + Arrays.deepToString(productionQuantities));
+                            // feasibility check
+                            residualCapacity[currentPeriod] = LotSizingFunctionsRuleInput.feasibilityCheck(numberMachines, numberProducts,
+                                    productionQuantities, processingTime, routings, currentCapacity, setupTimes, l,
+                                    false, false, jss);
+                            // If lot assignment feasible, assign lot and check next lot, otherwise discard and check next lot
+                            if (residualCapacity[currentPeriod] < 0) {
+                                //System.out.println("Assignment of product " + x + " not feasible");
+                                productionQuantities[productToAssign][currentPeriod] -= productsToCheck[productToAssign];
+                            } else {
+                                productsToCheck[productToAssign] = 0;
+                            } //System.out.println("Assignment of product " + productToAssign + " feasible");
+                            //System.out.println("production quantities: " + Arrays.deepToString(productionQuantities));}
                         }
                     }
                 }
@@ -593,12 +601,12 @@ public class LotSizingFunctionsFinal {
     }
 
     public static int[][] forwardShifting(int numberMachines, int numberProducts, int[][] productionQuantities,
-                                             double[][] processingTime, int[][]routings, double currentCapacity,
-                                             double[] residualCapacity,
-                                             int currentPeriod, int numberPeriods, int[][] demands, int[] setupCosts,
-                                             int[] holdingCosts, int[][] inventory, int[] setupTimes,
-                                             GPIndividual IndividualToEvaluate, DoubleData input, EvolutionState state,
-                                             int threadnum, ADFStack stack, ec.Problem problem){
+                                          double[][] processingTime, int[][]routings, double currentCapacity,
+                                          double[] residualCapacity,
+                                          int currentPeriod, int numberPeriods, int[][] demands, int[] setupCosts,
+                                          int[] holdingCosts, int[][] inventory, int[] setupTimes,
+                                          GPIndividual IndividualToEvaluate, DoubleData input, EvolutionState state,
+                                          int threadnum, ADFStack stack, ec.Problem problem){
         // get the production quantities that could eventually be shifted forward
         int[] productsToCheck = new int[numberProducts];
         for (int l=currentPeriod-1; l<=0; l--) {
@@ -635,7 +643,7 @@ public class LotSizingFunctionsFinal {
             // assign quantities of the selected product
             productionQuantities[productToAssign][currentPeriod] = productsToCheck[productToAssign];
             // feasibility check
-            residualCapacity[currentPeriod] = LotSizingFunctionsFinal.feasibilityCheck(numberMachines, numberProducts,
+            residualCapacity[currentPeriod] = dlsjss.LSJSS.evolveRule.LotSizingFunctionsFinal.feasibilityCheck(numberMachines, numberProducts,
                     productionQuantities, processingTime, routings, currentCapacity, setupTimes, currentPeriod,
                     IndividualToEvaluate, input, state, threadnum, stack, problem,false, false);
             // If lot assignment feasible, assign lot and check next lot, otherwise discard and check next lot

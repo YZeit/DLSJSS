@@ -140,6 +140,9 @@ public class LSJSS_GPHH extends GPProblemCOEV implements GroupedProblemForm {
             try {
                 averageCosts = MainLotsizingFinal.run((GPIndividual) ind[0], (GPIndividual) ind[1], input, state, threadnum, stack, this,
                         currentInstance);
+                if (averageCosts == 999999999999.0){
+                    System.out.println("costs: " + averageCosts);
+                }
                 //gap += (result/currentInstance.optimum_stochastic)-1;
                 //System.out.println("result: "+result);
             } catch (IOException e) {

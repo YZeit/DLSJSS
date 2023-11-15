@@ -144,9 +144,9 @@ public class CoevolutionStatistics extends Statistics implements SteadyStateStat
         int numEvaluationsRandomShuffle = Math.max(state.population.subpops[0].individuals.length, state.population.subpops[1].individuals.length);
         int numEvaluationsRandomSelection = Math.max(state.population.subpops[0].individuals.length, state.population.subpops[1].individuals.length)*2;
         individualsPerGeneration = new String[state.numGenerations][state.population.subpops.length]
-                [numEvaluationsRandomShuffle];
+                [numEvaluationsRandomSelection];
         fitnessesPerGeneration = new double[state.numGenerations][state.population.subpops.length]
-                [numEvaluationsRandomShuffle];
+                [numEvaluationsRandomSelection];
         CoevolutionState GPstate = (CoevolutionState) state;
         fitnessesPerGenerationValidation = new double[state.numGenerations][state.population.subpops.length][GPstate.validationSet.instances.length+1];
         individualsPerGenerationValidation = new String[state.numGenerations][state.population.subpops.length][GPstate.validationSet.instances.length+1];
