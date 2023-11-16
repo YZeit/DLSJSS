@@ -36,7 +36,7 @@ public class mainFixRule {
     }
 
     public static void main(String[] args) throws IOException, InvalidFormatException {
-        int nScenariosTraining = 5;
+        int nScenariosTraining = 10;
         int nScenariosValidation = 30;
         double cv = 0.2;
         double ct = 0.5;

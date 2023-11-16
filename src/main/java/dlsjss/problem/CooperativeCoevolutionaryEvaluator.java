@@ -366,8 +366,8 @@ public class CooperativeCoevolutionaryEvaluator extends Evaluator
                 }
 
             // validate best individual
-            //LSJSS_GPHH probLSJSS = (LSJSS_GPHH) prob;
-            //probLSJSS.validate(state, best_inds, 0);
+            LSJSS_GPHH probLSJSS = (LSJSS_GPHH) prob;
+            probLSJSS.validate(state, best_inds, 0);
         }
 
         // for each subpopulation
@@ -468,7 +468,7 @@ public class CooperativeCoevolutionaryEvaluator extends Evaluator
         }
         // validate best individual
         LSJSS_GPHH probLSJSS = (LSJSS_GPHH) prob;
-        //probLSJSS.validate(state, best_inds, 0);
+        probLSJSS.validate(state, best_inds, 0);
 
         // now shut down the selection methods
         if (numCurrent > 0)
