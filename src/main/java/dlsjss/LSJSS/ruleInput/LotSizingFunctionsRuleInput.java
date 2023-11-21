@@ -434,7 +434,7 @@ public class LotSizingFunctionsRuleInput {
                 //System.out.println("lot extension not feasible");
                 productionQuantities[productToExtend][currentPeriod] -= demands[productToExtend][periodToExtend];
             } else {
-                System.out.println("lot extension feasible");
+                //System.out.println("lot extension feasible");
             }
             // discard the tested lot extension for further tests
             CSI[productToExtend][periodToExtend] = 0.0;

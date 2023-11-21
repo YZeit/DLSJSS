@@ -41,7 +41,8 @@ public class MainInputRule {
         String pathScenariosValidation = "G:/My Drive/LSJSS_uncertainty/scenarios/";
 
 
-        String pathRules = "D:/OneDrive/PhD Engineering and Management/02_projects_ongoing/A novel rolling horizon heuristic/Experiment/GPHH/old_exp/run8/individuals_validation.xlsx";
+        String pathRules = "G:/My Drive/LSJSS_uncertainty/results/GPHH/results3/50x200/run0/individuals_validation.xlsx";
+
 
         String JSR = ExcelReader.readStringValue(pathRules, "JSS");
         String LSR = ExcelReader.readStringValue(pathRules, "LSS");
@@ -57,9 +58,10 @@ public class MainInputRule {
         for (int i = 0; i < PRODUCTS.length; i++) {
             double totalResults = 0;
             String pathToCurrentScenario = pathScenariosValidation + PRODUCTS[i] + "X" + MACHINES[i] + "x" + PERIODS[i] + "/cv" + cv + "/";
+            String pathToCurrentOptimum = pathScenariosValidation + "perfect_information/ct" + ct + "/cv" + cv + "/" + PRODUCTS[i] + "X" + MACHINES[i] + "x" + PERIODS[i] + "/";
             for (int s = 0; s < nScenariosValidation; s++) {
                 InstanceFixRule currentInstance = new InstanceFixRule();
-                currentInstance.setup(PRODUCTS[i], MACHINES[i], PERIODS[i], s, pathToCurrentScenario, pathToInstances);
+                currentInstance.setup(PRODUCTS[i], MACHINES[i], PERIODS[i], s, pathToCurrentScenario, pathToInstances, pathToCurrentOptimum);
                 double result = MainLotsizingRuleInput.run(currentInstance, JSR, LSR);
                 totalResults += result;
             }

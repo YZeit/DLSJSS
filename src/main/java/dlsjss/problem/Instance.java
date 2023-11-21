@@ -70,6 +70,11 @@ public class Instance {
         routings = ExcelReader.readInputDataArrayInt(FILE_PATH, "routings");
         processingTime = ExcelReader.readInputDataArrayDouble(FILE_PATH, "processing_time");
         capacity = ExcelReader.readInputDataListDouble(FILE_PATH, "period_length");
+        String FILE_PATH_OPTIMUM = path + "perfect_information/ct" + ct + "/cv" + cv + "/" + nProducts + "x" + nMachines + "x" + nPeriods + "/results_progress_scenario" + nScenario + ".xlsx";
+        solution = ExcelReader.readInputDataListDouble(FILE_PATH_OPTIMUM, "incumbent solution");
+        // Retrieve the last value
+        int lastIndex = solution.length;
+        optimum = solution[lastIndex-1];
         // load static data
         int[] staticData = ExcelReader.readInputDataListInt(FILE_PATH, "static_parameters");
         setupTimes = new int[nProducts];
