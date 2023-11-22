@@ -7,7 +7,7 @@ public class main {
         int nGenerations = 100;
         int nPopulation = 200;
         int nTrainSetSize = 5;
-        int nValidationSetSize = 30;
+        int nValidationSetSize = 10;
         double cv = 0.2;    // Coefficient Variant
         double ct = 0.5;    // Capacity Tightness
         int[] nProducts = {6, 10, 20}; // here I can decide what type of instances I want to consider (also possible to consider different types in a single run)

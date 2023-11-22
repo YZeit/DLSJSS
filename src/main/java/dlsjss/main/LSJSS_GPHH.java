@@ -162,7 +162,7 @@ public class LSJSS_GPHH extends GPProblemCOEV implements GroupedProblemForm {
                 //System.out.println("instance: " + r);
                 //currentInstance.print();
                 try {
-                    result += MainLotsizingFinal.run((GPIndividual) ind[0], (GPIndividual) ind[1], input, state, threadnum, stack, this,
+                    result = MainLotsizingFinal.run((GPIndividual) ind[0], (GPIndividual) ind[1], input, state, threadnum, stack, this,
                             currentInstance);
                     gap += (result/currentInstance.optimum)-1;
                     //System.out.println("result: "+result);
@@ -177,7 +177,7 @@ public class LSJSS_GPHH extends GPProblemCOEV implements GroupedProblemForm {
         }
 
         //double averageGap = gap/nState.trainingSet.instances.length;
-        //System.out.println("total costs: " + averageCosts);
+        //System.out.println("average gap: " + averageGap);
 
         //((GPIndividual)ind).trees[0].child.eval(
         //       state,threadnum,input,stack,((GPIndividual)ind),this);
