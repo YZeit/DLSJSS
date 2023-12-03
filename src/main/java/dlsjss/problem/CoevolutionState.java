@@ -98,10 +98,8 @@ public class CoevolutionState extends EvolutionState
 
         p = new Parameter(P_NTRAINBATCH);
         nTrainBatch = parameters.getInt(p,null,1);
-        System.out.println("trainbatch: " + nTrainBatch);
         p = new Parameter(P_NPROBLEMS);
         nProblems = parameters.getInt(p,null,1);
-        System.out.println("nProblems: " + nProblems);
 
         randNum = new int[nTrainBatch*nProblems];
 

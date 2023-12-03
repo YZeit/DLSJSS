@@ -130,10 +130,10 @@ public class LSJSS_GPHH extends GPProblemCOEV implements GroupedProblemForm {
 
         double gap = 0.0;
         double result = 0.0;
-        CoevolutionState nState = (CoevolutionState)state;
-        //System.out.println("training set size:" + nState.trainingSet.instances.length);
         double averageCosts = 0.0;
         double averageGap = 0.0;
+        CoevolutionState nState = (CoevolutionState)state;
+        //System.out.println("training set size:" + nState.trainingSet.instances.length);
         if (randTrainInstSel) {
             // random instance selection from the training set
             int[] randomNum = nState.randNum;
