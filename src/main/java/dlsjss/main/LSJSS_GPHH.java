@@ -156,8 +156,8 @@ public class LSJSS_GPHH extends GPProblemCOEV implements GroupedProblemForm {
                     throw new RuntimeException(e);
                 }
             }
-            averageCosts = result/nState.trainingSet.instances.length;
-            averageGap = gap/nState.trainingSet.instances.length;
+            averageCosts = result/(nState.nProblems*nState.nTrainBatch);
+            averageGap = gap/(nState.nProblems*nState.nTrainBatch);
         }
         else {
             // full set of instances
