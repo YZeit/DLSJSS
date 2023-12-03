@@ -19,7 +19,7 @@ public class Run {
                                String pathToInstancesTraining, String pathToInstancesValidation,
                                int numberOfJobs, int nGenerations, int nPopulation, int[] nProducts,
                                int[] nMachines, int[] nPeriods, boolean randTrain, int nTrainSetSize,
-                               int nValidationSetSize, double cv, double ct) {
+                               int nTrainingBatch, int nValidationSetSize, double cv, double ct) {
         int nTrainSetVariety = nProducts.length;
         int nValidationSetVariety = nProducts.length;
         String[] runConfig = new String[] {
@@ -36,9 +36,11 @@ public class Run {
                 "-p", ("products="+nProducts),
                 "-p", ("machines="+nMachines),
                 "-p", ("periods="+nPeriods),
+                "-p", ("problem-size="+nProducts.length),
                 "-p", ("trainingset.instance-size="+nTrainSetVariety),
                 "-p", ("validationset.instance-size="+nValidationSetVariety),
                 "-p", ("random-training-instance-selection="+randTrain),
+                "-p", ("training-batch-size="+nTrainingBatch),
                 "-p", ("trainingset.scenariosize="+nTrainSetSize),
                 "-p", ("validationset.scenariosize="+nValidationSetSize),
                 "-p", ("coefficient-variant="+cv),

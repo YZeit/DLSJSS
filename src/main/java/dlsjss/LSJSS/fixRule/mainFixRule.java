@@ -36,13 +36,13 @@ public class mainFixRule {
     }
 
     public static void main(String[] args) throws IOException, InvalidFormatException {
-        int nScenariosTraining = 20;
+        int nScenariosTraining = 10;
         int nScenariosValidation = 30;
-        double cv = 0.2;
+        double cv = 0.5;
         double ct = 0.5;
-        int[] PRODUCTS = {6, 6, 6, 10, 10, 10, 20, 20, 20};
-        int[] MACHINES = {6, 6, 6, 10, 10, 10, 5, 5, 5};
-        int[] PERIODS = {5, 10, 20, 5, 10, 20, 5, 10, 20};
+        int[] PRODUCTS = {6, 10, 20};
+        int[] MACHINES = {6, 10, 5};
+        int[] PERIODS = {20, 20, 20};
         String[] LSS = {"DS", "E", "GR", "LUC", "AC", "R"};
         String[] JSS = {"SPT", "FIFO", "MTWR", "WINQ", "PT+WINQ", "R"};
         String pathScenariosTraining = "G:/My Drive/LSJSS_uncertainty/scenarios_training/";
@@ -128,7 +128,7 @@ public class mainFixRule {
 
                 for (int i = 0; i < PRODUCTS.length; i++) {
                     System.out.println("instance " + PRODUCTS[i] + "x" + MACHINES[i] + "x" + PERIODS[i]);
-                    /*
+
                     //training
                     // mean
                     Cell cellTitleTraining = titleRowTraining.createCell(i+1);
@@ -190,7 +190,7 @@ public class mainFixRule {
                     Cell cellTrainingExecutionTime = rowTrainingExecutionTime.createCell(i+1);
                     cellTrainingExecutionTime.setCellValue(totalElapsedTime / nScenariosTraining);
 
-                     */
+
                     // testing
                     // mean
                     Cell cellTitleTesting = titleRowTesting.createCell(i+1);
@@ -212,13 +212,13 @@ public class mainFixRule {
                     double stdCostsTesting = 0.0;
                     double minCostsTesting = 100000000000000.00;
                     double maxCostsTesting = 0.0;
-                    double totalElapsedTime = 0.0;
+                    totalElapsedTime = 0.0;
                     double[] testingList = new double[nScenariosValidation];
                     String pathToCurrentScenarioValidation = pathScenariosValidation + PRODUCTS[i]+"X"+MACHINES[i]+"x"+PERIODS[i]+"/cv"+cv+"/";
                     String pathToOptimum = pathScenariosValidation + "perfect_information/";
                     for (int s = 0; s < nScenariosValidation; s++) {
                         System.out.println("validation scenario " + s);
-                        currentInstance.setup(PRODUCTS[i], MACHINES[i], PERIODS[i], s, pathToCurrentScenarioValidation, pathInstances, pathToOptimum);
+                        currentInstance.setup(PRODUCTS[i], MACHINES[i], PERIODS[i], s, pathToCurrentScenarioValidation, pathInstances);
                         long startTime = System.nanoTime();
                         double result = MainLotsizingFixRule.run(currentInstance, j, l);
                         long elapsedTime = System.nanoTime() - startTime;

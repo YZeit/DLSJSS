@@ -136,21 +136,28 @@ public class LSJSS_GPHH extends GPProblemCOEV implements GroupedProblemForm {
         double averageGap = 0.0;
         if (randTrainInstSel) {
             // random instance selection from the training set
-            int randomNum = nState.randNum;
-            Instance currentInstance = nState.trainingSet.instances[randomNum];
-            try {
-                averageCosts = MainLotsizingFinal.run((GPIndividual) ind[0], (GPIndividual) ind[1], input, state, threadnum, stack, this,
-                        currentInstance);
-                if (averageCosts == 999999999999.0){
-                    System.out.println("costs: " + averageCosts);
+            int[] randomNum = nState.randNum;
+            // full set of instances
+            //System.out.println("Trainings set size: "+nState.trainingSet.instances.length);
+            for (int r=0; r<nState.nProblems*nState.nTrainBatch; r++) {
+                //System.out.println("current instance: "+r);
+                Instance currentInstance = nState.trainingSet.instances[randomNum[r]];
+                //nState.trainingSet.instances[r].print();
+                //System.out.println("instance: " + r);
+                //currentInstance.print();
+                try {
+                    result = MainLotsizingFinal.run((GPIndividual) ind[0], (GPIndividual) ind[1], input, state, threadnum, stack, this,
+                            currentInstance);
+                    gap += (result/currentInstance.optimum)-1;
+                    //System.out.println("result: "+result);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                } catch (InvalidFormatException e) {
+                    throw new RuntimeException(e);
                 }
-                averageGap = (result/currentInstance.optimum)-1;
-                //System.out.println("result: "+result);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            } catch (InvalidFormatException e) {
-                throw new RuntimeException(e);
             }
+            averageCosts = result/nState.trainingSet.instances.length;
+            averageGap = gap/nState.trainingSet.instances.length;
         }
         else {
             // full set of instances

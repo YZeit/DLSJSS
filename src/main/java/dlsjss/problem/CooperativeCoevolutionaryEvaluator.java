@@ -298,7 +298,24 @@ public class CooperativeCoevolutionaryEvaluator extends Evaluator
                                                  final GroupedProblemForm prob ) {
         int evaluations = 0;
         CoevolutionState nState = (CoevolutionState)state;
-        nState.randNum = ThreadLocalRandom.current().nextInt(0, nState.trainingSet.instances.length);
+        for (int p=0; p<nState.nProblems; p++){
+            for (int b=0; b<nState.nTrainBatch; b++){
+                int lowerBound = (nState.trainingSet.instances.length/nState.nProblems)*p;
+                System.out.println("lower bound: " + lowerBound);
+                int upperBound = (nState.trainingSet.instances.length/nState.nProblems)*(p+1);
+                System.out.println("upper bound: " + upperBound);
+                int currentRandNum = ThreadLocalRandom.current().nextInt(lowerBound, upperBound);
+                System.out.println(currentRandNum);
+                nState.randNum[(p*nState.nTrainBatch)+b] = currentRandNum;
+
+            }
+
+        }
+        System.out.println("trainset: " + nState.trainingSet.instances.length/nState.nProblems);
+        for (int bla=0; bla<nState.nTrainBatch*nState.nProblems; bla++){
+            System.out.println("random number " + bla + ": " + nState.randNum[bla]);
+        }
+
 
         inds = new Individual[population.subpops.length];
         best_inds = new Individual[population.subpops.length];

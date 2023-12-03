@@ -54,12 +54,17 @@ public class CoevolutionState extends EvolutionState
 
     public static final String P_TRAINING_SET = "trainingset";
     public static final String P_VALIDATION_SET = "validationset";
+    public static final String P_NTRAINBATCH = "training-batch-size";
+    public static final String P_NPROBLEMS = "problem-size";
 
-    public int randNum;
+    public int[] randNum;
+    public int nTrainBatch;
+    public int nProblems;
 
 
     public void startFresh()
     {
+
         Parameter p;
         p = new Parameter(P_TRAINING_SET);
         //trainingSet = new InstanceSetSimple();
@@ -83,13 +88,22 @@ public class CoevolutionState extends EvolutionState
             throw new RuntimeException(e);
         }
         for (int vs=0; vs<trainingSet.instances.length; vs++) {
-            System.out.println("Training Instance: " + vs);
-            trainingSet.instances[vs].print();
+            //System.out.println("Training Instance: " + vs);
+            //trainingSet.instances[vs].print();
         }
         for (int vs=0; vs<validationSet.instances.length; vs++) {
-            System.out.println("Validation Instance: " + vs);
-            validationSet.instances[vs].print();
+            //System.out.println("Validation Instance: " + vs);
+            //validationSet.instances[vs].print();
         }
+
+        p = new Parameter(P_NTRAINBATCH);
+        nTrainBatch = parameters.getInt(p,null,1);
+        System.out.println("trainbatch: " + nTrainBatch);
+        p = new Parameter(P_NPROBLEMS);
+        nProblems = parameters.getInt(p,null,1);
+        System.out.println("nProblems: " + nProblems);
+
+        randNum = new int[nTrainBatch*nProblems];
 
 
         output.message("Setting up");
