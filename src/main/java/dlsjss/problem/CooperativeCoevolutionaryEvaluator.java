@@ -14,6 +14,9 @@ import ec.simple.*;
 import ec.util.*;
 import dlsjss.main.LSJSS_GPHH;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
@@ -291,7 +294,26 @@ public class CooperativeCoevolutionaryEvaluator extends Evaluator
         }
     }
 
+    public static List<Integer> generateUniqueRandomNumbers(int lowerBound, int upperBound, int amount) {
+        // Validate input parameters
+        if (amount > upperBound - lowerBound + 1) {
+            throw new IllegalArgumentException("Amount of numbers requested exceeds the range");
+        }
 
+        // Create a list of numbers in the specified range
+        List<Integer> numbers = new ArrayList<>();
+        for (int i = lowerBound; i < upperBound; i++) {
+            numbers.add(i);
+        }
+
+        // Shuffle the list using Fisher-Yates algorithm
+        Collections.shuffle(numbers);
+
+        // Take the required number of elements from the shuffled list
+        List<Integer> randomNumbers = numbers.subList(0, amount);
+
+        return randomNumbers;
+    }
 
     public void performCoevolutionaryEvaluation( final EvolutionState state,
                                                  final Population population,
@@ -299,15 +321,15 @@ public class CooperativeCoevolutionaryEvaluator extends Evaluator
         int evaluations = 0;
         CoevolutionState nState = (CoevolutionState)state;
         for (int p=0; p<nState.nProblems; p++){
+            int lowerBound = (nState.trainingSet.instances.length/nState.nProblems)*p;
+            int upperBound = (nState.trainingSet.instances.length/nState.nProblems)*(p+1);
+            List<Integer> randomNumbers = generateUniqueRandomNumbers(lowerBound, upperBound, nState.nTrainBatch);
             for (int b=0; b<nState.nTrainBatch; b++){
-                int lowerBound = (nState.trainingSet.instances.length/nState.nProblems)*p;
-                int upperBound = (nState.trainingSet.instances.length/nState.nProblems)*(p+1);
-                int currentRandNum = ThreadLocalRandom.current().nextInt(lowerBound, upperBound);
-                nState.randNum[(p*nState.nTrainBatch)+b] = currentRandNum;
-
+                //int currentRandNum = ThreadLocalRandom.current().nextInt(lowerBound, upperBound);
+                nState.randNum[(p*nState.nTrainBatch)+b] = randomNumbers.get(b);
             }
-
         }
+
 
 
         inds = new Individual[population.subpops.length];

@@ -138,9 +138,7 @@ public class LSJSS_GPHH extends GPProblemCOEV implements GroupedProblemForm {
             // random instance selection from the training set
             int[] randomNum = nState.randNum;
             // full set of instances
-            //System.out.println("Trainings set size: "+nState.trainingSet.instances.length);
             for (int r=0; r<nState.nProblems*nState.nTrainBatch; r++) {
-                //System.out.println("current instance: "+r);
                 Instance currentInstance = nState.trainingSet.instances[randomNum[r]];
                 //nState.trainingSet.instances[r].print();
                 //System.out.println("instance: " + r);
